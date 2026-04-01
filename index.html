@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>MDR Controllo</title>
+<title>MDR Controllo PRO</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"/>
 <style>
 :root { --bg: #f0f4f8; --white: #ffffff; --border: #d1d9e6; --text: #2d3748; --muted: #718096; --accent: #0057b8; --si: #22c55e; --no: #ef4444; --tab-h: 75px; }
@@ -16,33 +16,32 @@ body { background: var(--bg); color: var(--text); height: 100dvh; display: flex;
 .card { background: white; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 .section-title { background: #e2e8f0; margin: -15px -15px 12px -15px; padding: 10px 15px; font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; border-radius: 16px 16px 0 0; }
 
-/* INPUT UNIFORMI */
+/* INPUT */
 input { width: 100%; height: 48px; padding: 0 12px; border: 2px solid var(--border); border-radius: 10px; font-size: 15px; margin-bottom: 10px; outline: none; background: white; -webkit-appearance: none; }
-
-/* GRIGLIA PERFETTA */
 .field-grid { display: flex; gap: 10px; margin-bottom: 10px; width: 100%; }
-.field-grid > div { flex: 1; width: 50%; } /* Forza la metà esatta */
-
+.field-grid > div { flex: 1; width: 50%; }
 .field-label { font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; display: block; }
 
-/* PULSANTI TIPOLOGIA UGUALI */
-.tipo-group { display: flex; gap: 8px; margin-top: 5px; }
-.tipo-btn { flex: 1; height: 42px; border: 2px solid var(--border); border-radius: 10px; background: white; font-size: 9px; font-weight: 700; color: var(--muted); display: flex; align-items: center; justify-content: center; text-align: center; }
+/* TIPO E ANS BUTTONS */
+.tipo-group, .ans-group { display: flex; gap: 8px; margin-top: 5px; }
+.tipo-btn, .ans-btn { flex: 1; height: 42px; border: 2px solid var(--border); border-radius: 10px; background: white; font-size: 9px; font-weight: 700; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+.ans-btn { height: 48px; font-size: 14px; }
+
 .active-contatto { background: #dbeafe !important; border-color: #3b82f6 !important; color: #1e40af !important; }
 .active-droplet { background: #f3e8ff !important; border-color: #a855f7 !important; color: #6b21a8 !important; }
 .active-aereo { background: #ffedd5 !important; border-color: #f97316 !important; color: #9a3412 !important; }
-
-/* PULSANTI SI NO NA UGUALI */
-.item-row { padding: 12px 0; border-top: 1px solid #edf2f7; }
-.item-text { font-size: 14px; line-height: 1.3; margin-bottom: 12px; display: block; font-weight: 500; }
-.ans-group { display: flex; gap: 8px; width: 100%; }
-.ans-btn { flex: 1; height: 48px; border-radius: 10px; border: 2px solid var(--border); background: white; font-size: 14px; font-weight: 700; color: var(--muted); }
 .active-si { background: #dcfce7 !important; border-color: var(--si) !important; color: #166534 !important; }
 .active-no { background: #fee2e2 !important; border-color: var(--no) !important; color: #991b1b !important; }
 .active-na { background: #f1f5f9 !important; border-color: #94a3b8 !important; color: #334155 !important; }
 
+.item-row { padding: 12px 0; border-top: 1px solid #edf2f7; }
+.item-text { font-size: 14px; line-height: 1.3; margin-bottom: 12px; display: block; font-weight: 500; }
+
+/* COMPLIANCE & SAVE */
 .compliance-box { background: linear-gradient(135deg, #0057b8 0%, #003d82 100%); color: white; border-radius: 14px; padding: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
 .btn-save { background: var(--accent); color: white; width: 100%; padding: 18px; border: none; border-radius: 14px; font-weight: 700; font-size: 16px; margin-top: 8px; }
+
+/* TABS */
 .tabs { display: flex; background: white; border-top: 1px solid var(--border); position: fixed; bottom: 0; width: 100%; height: var(--tab-h); padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
 .tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); font-size: 11px; font-weight: 700; }
 .tab.active { color: var(--accent); background: #f0f7ff; border-top: 4px solid var(--accent); }
@@ -59,14 +58,11 @@ input { width: 100%; height: 48px; padding: 0 12px; border: 2px solid var(--bord
     <div class="page active" id="page-form">
         <div class="card">
             <div class="section-title">Anagrafica</div>
-            
             <div class="field-label">Paziente (Cognome o ID)</div>
             <input type="text" id="f-paziente" placeholder="es. ROSSI MARIO">
-            
             <div class="field-label">Unità Operativa</div>
             <input type="text" id="f-uo" list="uo-list" placeholder="Scrivi reparto...">
             <datalist id="uo-list"></datalist>
-            
             <div class="field-grid">
                 <div>
                     <div class="field-label">Stanza/Letto</div>
@@ -77,7 +73,6 @@ input { width: 100%; height: 48px; padding: 0 12px; border: 2px solid var(--bord
                     <input type="date" id="f-data-inizio">
                 </div>
             </div>
-
             <div class="field-label">Tipologia Isolamento</div>
             <div class="tipo-group">
                 <button class="tipo-btn" id="btn-contatto" onclick="setTipo('contatto')">👋 CONTATTO</button>
@@ -107,19 +102,33 @@ input { width: 100%; height: 48px; padding: 0 12px; border: 2px solid var(--bord
     </div>
 
     <div class="page" id="page-stats">
-        <div class="card">
-            <div class="section-title">Analisi</div>
+        <div class="card" style="background: #1e293b; color: white;">
+            <div class="section-title" style="background: #334155; color: #38bdf8;">Overview Performance</div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
-                <div style="background:#f8fafc; padding:10px; border-radius:12px; border:1px solid var(--border); text-align:center;">
-                    <span id="stat-tot" style="font-size:20px; font-weight:700; color:var(--accent)">0</span><br><small style="font-size:9px;">SCHEDE</small>
+                <div style="background:#0f172a; padding:15px; border-radius:12px; border:1px solid #334155; text-align:center;">
+                    <span id="stat-tot" style="font-size:24px; font-weight:700; color:#38bdf8">0</span><br>
+                    <small style="font-size:10px; color:#94a3b8; text-transform:uppercase;">Audit Totali</small>
                 </div>
-                <div style="background:#f8fafc; padding:10px; border-radius:12px; border:1px solid var(--border); text-align:center;">
-                    <span id="stat-avg" style="font-size:20px; font-weight:700; color:var(--accent)">0%</span><br><small style="font-size:9px;">MEDIA</small>
+                <div style="background:#0f172a; padding:15px; border-radius:12px; border:1px solid #334155; text-align:center;">
+                    <span id="stat-avg" style="font-size:24px; font-weight:700; color:#22c55e">0%</span><br>
+                    <small style="font-size:10px; color:#94a3b8; text-transform:uppercase;">Global Compliance</small>
                 </div>
             </div>
-            <div id="stat-reparti"></div>
-            <div class="field-label" style="margin-top:15px">Top Criticità</div>
-            <div id="stat-errors"></div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">Performance per Reparto</div>
+            <div id="stat-reparti-grid" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">Analisi Analitica (23 Item)</div>
+            <div id="item-analysis" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <div class="card" style="border-left: 5px solid var(--no);">
+            <div class="section-title" style="color: var(--no);">Focus Criticità per Reparto</div>
+            <div id="stat-reparto-errors"></div>
         </div>
     </div>
 </div>
@@ -236,31 +245,12 @@ function save() {
     location.reload();
 }
 
-function exportToExcel() {
-    if(!db.length) return alert("Vuoto.");
-    let csv = "\uFEFFPaziente;UO;Stanza;Inizio;Tipo;Data Valutazione;Compliance\n";
-    db.forEach(r => { csv += `${r.paziente};${r.uo};${r.ubicazione};${r.inizio};${r.tipo.toUpperCase()};${r.dataVal};${r.score}\n`; });
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `Report_MDR_${new Date().toLocaleDateString()}.csv`;
-    link.click();
-}
-
 function nav(p, btn) {
     document.querySelectorAll('.page, .tab').forEach(el => el.classList.remove('active'));
     document.getElementById('page-'+p).classList.add('active');
     btn.classList.add('active');
     if(p==='data') renderData();
     if(p==='stats') renderStats();
-}
-
-function deleteRec(id) {
-    if(confirm("Eliminare definitivamente?")) {
-        db = db.filter(r => r.id !== id);
-        localStorage.setItem('mdr_v7_db', JSON.stringify(db));
-        renderData();
-    }
 }
 
 function renderData() {
@@ -273,7 +263,6 @@ function renderData() {
             </div>
             <div style="text-align:right">
                 <div style="font-weight:700; color:${r.score > 80 ? 'var(--si)' : 'var(--no)'}; font-size:16px">${r.score}%</div>
-                <button onclick="deleteRec(${r.id})" style="border:none; color:var(--no); font-size:9px; background:none;">ELIMINA</button>
             </div>
         </div>`).reverse().join('') : "Nessuna scheda presente";
 }
@@ -281,18 +270,63 @@ function renderData() {
 function renderStats() {
     if(!db.length) return;
     document.getElementById('stat-tot').textContent = db.length;
-    let avg = Math.round(db.reduce((s, c) => s + c.score, 0) / db.length);
-    document.getElementById('stat-avg').textContent = avg + '%';
+    let globalAvg = Math.round(db.reduce((s, c) => s + c.score, 0) / db.length);
+    const avgEl = document.getElementById('stat-avg');
+    avgEl.textContent = globalAvg + '%';
+    avgEl.style.color = globalAvg > 80 ? '#22c55e' : (globalAvg > 60 ? '#f59e0b' : '#ef4444');
+
     const reps = {};
-    db.forEach(r => { if(!reps[r.uo]) reps[r.uo] = []; reps[r.uo].push(r.score); });
-    document.getElementById('stat-reparti').innerHTML = Object.keys(reps).map(k => {
-        let m = Math.round(reps[k].reduce((a,b)=>a+b)/reps[k].length);
-        return `<div style="margin-bottom:8px; font-size:12px;"><b>${k}</b>: ${m}% compliance media</div>`;
-    }).join('');
-    const errors = {};
-    db.forEach(r => { Object.entries(r.raw).forEach(([id, val]) => { if(val === 'NO') errors[id] = (errors[id] || 0) + 1; }); });
-    const top = Object.entries(errors).sort((a,b)=>b[1]-a[1]).slice(0,3);
-    document.getElementById('stat-errors').innerHTML = top.map(e => `<div style="font-size:11px; color:var(--no); margin-bottom:4px;">⚠️ ${ITEMS.find(i=>i.id==e[0]).t} (${e[1]} errori)</div>`).join('');
+    db.forEach(r => { 
+        if(!reps[r.uo]) reps[r.uo] = { scores: [], errors: {} };
+        reps[r.uo].scores.push(r.score);
+        Object.entries(r.raw).forEach(([id, val]) => {
+            if(val === 'NO') reps[r.uo].errors[id] = (reps[r.uo].errors[id] || 0) + 1;
+        });
+    });
+
+    let repsHtml = '';
+    Object.keys(reps).forEach(uo => {
+        let m = Math.round(reps[uo].scores.reduce((a,b)=>a+b)/reps[uo].scores.length);
+        let color = m > 80 ? '#22c55e' : (m > 60 ? '#f59e0b' : '#ef4444');
+        repsHtml += `<div style="background:#f8fafc; padding:12px; border-radius:10px; border:1px solid #e2e8f0; margin-bottom:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;"><b style="font-size:13px;">${uo}</b><span style="color:${color}; font-weight:700;">${m}%</span></div>
+                <div style="width:100%; height:6px; background:#e2e8f0; border-radius:3px; overflow:hidden;"><div style="width:${m}%; height:100%; background:${color};"></div></div></div>`;
+    });
+    document.getElementById('stat-reparti-grid').innerHTML = repsHtml;
+
+    let itemHtml = '';
+    ITEMS.forEach(item => {
+        let si = 0, totale = 0;
+        db.forEach(r => { if(r.raw[item.id] === 'SI') { si++; totale++; } else if(r.raw[item.id] === 'NO') { totale++; } });
+        let pct = totale > 0 ? Math.round((si/totale)*100) : 0;
+        let color = pct > 80 ? '#22c55e' : (pct > 50 ? '#f59e0b' : '#ef4444');
+        itemHtml += `<div style="font-size:11px; margin-bottom:8px;"><div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80%;">${item.id}. ${item.t}</span><b>${pct}%</b></div>
+                <div style="width:100%; height:4px; background:#f1f5f9; border-radius:2px;"><div style="width:${pct}%; height:100%; background:${color}; border-radius:2px;"></div></div></div>`;
+    });
+    document.getElementById('item-analysis').innerHTML = itemHtml;
+
+    let errorHtml = '';
+    Object.keys(reps).forEach(uo => {
+        const topUoErrors = Object.entries(reps[uo].errors).sort((a,b)=>b[1]-a[1]).slice(0,2);
+        if(topUoErrors.length > 0) {
+            errorHtml += `<div style="margin-bottom:15px;"><div style="font-weight:700; font-size:12px; color:var(--accent); border-bottom:1px solid #eee; margin-bottom:5px;">${uo}</div>`;
+            topUoErrors.forEach(e => { errorHtml += `<div style="font-size:11px; color:#444; margin-bottom:3px;">🚩 <i>Item ${e[0]}:</i> ${ITEMS.find(i=>i.id==e[0]).t.substring(0,60)}... <b>(${e[1]} fallimenti)</b></div>`; });
+            errorHtml += `</div>`;
+        }
+    });
+    document.getElementById('stat-reparto-errors').innerHTML = errorHtml || "Ottimo! Nessun errore rilevato.";
+}
+
+function exportToExcel() {
+    if(!db.length) return alert("Vuoto.");
+    let csv = "\uFEFFPaziente;UO;Stanza;Inizio;Tipo;Data Valutazione;Compliance\n";
+    db.forEach(r => { csv += `${r.paziente};${r.uo};${r.ubicazione};${r.inizio};${r.tipo.toUpperCase()};${r.dataVal};${r.score}\n`; });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `Report_MDR_${new Date().toLocaleDateString()}.csv`;
+    link.click();
 }
 
 init();
