@@ -309,9 +309,14 @@ input[type="date"]::-webkit-date-and-time-value {
     </div>
 
     <div class="page" id="page-data">
-        <div class="section-title">Archivio Schede</div>
-        <div id="list-container"></div>
+    <div class="card">
+        <div class="section-title">Filtro Reparto</div>
+        <select id="data-filter-uo" onchange="renderData()"></select>
     </div>
+
+    <div class="section-title">Archivio Schede</div>
+    <div id="list-container"></div>
+</div>
 
     <div class="page" id="page-stats">
     <div class="card">
@@ -616,7 +621,24 @@ function nav(p, btn) {
     document.getElementById('page-' + p).classList.add('active');
     btn.classList.add('active');
 
-    if (p === 'data') renderData();
+    if (p === 'data') {
+    // conta schede per reparto
+    let map = {};
+
+    db.forEach(r => {
+        if (!map[r.uo]) map[r.uo] = 0;
+        map[r.uo]++;
+    });
+
+    // crea lista ordinata
+    let uos = Object.keys(map).sort();
+
+    document.getElementById('data-filter-uo').innerHTML =
+        `<option value="ALL">TUTTI I REPARTI (${db.length})</option>` +
+        uos.map(u => `<option value="${u}">${u} (${map[u]})</option>`).join('');
+
+    renderData();
+}
 
     if (p === 'stats') {
         const uosInDb = [...new Set(db.map(r => r.uo))].sort();
@@ -630,20 +652,29 @@ function nav(p, btn) {
 function renderData() {
     const container = document.getElementById('list-container');
 
-    if (!db.length) {
+    // valore filtro
+    const filter = document.getElementById('data-filter-uo')?.value || 'ALL';
+
+    // applica filtro
+    let data = filter === 'ALL' ? db : db.filter(r => r.uo === filter);
+
+    if (!data.length) {
         container.innerHTML = "Nessuna valutazione.";
         return;
     }
 
-    container.innerHTML = db.slice().reverse().map(r => `
-        <div class="card" onclick="openDetails(${r.id})" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
-            <div>
-                <b>${r.paziente}</b><br>
-                <small>${r.uo} | Val: ${r.dataVal}</small>
+    container.innerHTML = data
+        .slice()
+        .reverse()
+        .map(r => `
+            <div class="card" onclick="openDetails(${r.id})" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+                <div>
+                    <b>${r.paziente}</b><br>
+                    <small>${r.uo} | Val: ${r.dataVal}</small>
+                </div>
+                <b style="font-size:20px; color:${r.score < 60 ? 'var(--no)' : 'var(--si)'}">${r.score}%</b>
             </div>
-            <b style="font-size:20px; color:${r.score < 60 ? 'var(--no)' : 'var(--si)'}">${r.score}%</b>
-        </div>
-    `).join('');
+        `).join('');
 }
 
 function openDetails(id) {
