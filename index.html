@@ -260,25 +260,37 @@ input[type="date"]::-webkit-date-and-time-value {
 <div class="pages">
     <div class="page active" id="page-form">
         <div class="card">
-            <div class="section-title">Anagrafica</div>
-            <input type="text" id="f-paziente" placeholder="Paziente (Cognome Nome)" oninput="check()">
-            <input type="text" id="f-uo" placeholder="Unità di assegnazione / Reparto" oninput="showSuggestions(this.value)" autocomplete="off">
-            <div id="suggestion-box" class="suggestion-box"></div>
+    <div class="section-title">Anagrafica</div>
 
-            <div style="display:flex; gap:10px; align-items:flex-end;">
-                <input type="text" id="f-ubicazione" placeholder="Stanza / Letto" oninput="check()" style="flex:1; margin-bottom:0;">
-                <div style="flex:1;">
-                    <span class="label-sm">Data Inizio Isolamento</span>
-                    <input type="date" id="f-data" oninput="check()" style="margin-bottom:0;">
-                </div>
-            </div>
+    <div>
+        <span class="label-sm">Paziente</span>
+        <input type="text" id="f-paziente" placeholder="Cognome Nome" oninput="check()">
+    </div>
 
-            <div class="ans-group">
-                <button class="ans-btn" id="btn-contatto" onclick="setTipo('contatto')">👋 CONTATTO</button>
-                <button class="ans-btn" id="btn-droplet" onclick="setTipo('droplet')">💧 DROPLET</button>
-                <button class="ans-btn" id="btn-aereo" onclick="setTipo('aereo')">🌬️ AEREO</button>
-            </div>
+    <div>
+        <span class="label-sm">Unità di degenza</span>
+        <input type="text" id="f-uo" placeholder="Reparto" oninput="showSuggestions(this.value)" autocomplete="off">
+        <div id="suggestion-box" class="suggestion-box"></div>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+        <div style="flex:1;">
+            <span class="label-sm">Stanza / Letto</span>
+            <input type="text" id="f-ubicazione" oninput="check()" style="margin-bottom:0;">
         </div>
+
+        <div style="flex:1;">
+            <span class="label-sm">Data Inizio Isolamento</span>
+            <input type="date" id="f-data" oninput="check()" style="margin-bottom:0;">
+        </div>
+    </div>
+
+    <div class="ans-group" style="margin-top:15px;">
+        <button class="ans-btn" id="btn-contatto" onclick="setTipo('contatto')">👋 CONTATTO</button>
+        <button class="ans-btn" id="btn-droplet" onclick="setTipo('droplet')">💧 DROPLET</button>
+        <button class="ans-btn" id="btn-aereo" onclick="setTipo('aereo')">🌬️ AEREO</button>
+    </div>
+</div>
 
         <div id="survey-content"></div>
 
