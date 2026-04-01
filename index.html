@@ -1,362 +1,100 @@
 <!DOCTYPE html>
-
 <html lang="it">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>Isolamento MDR · Verifica Compliance</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Source+Sans+3:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+<title>Verifica Isolamento MDR v8.2</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"/>
 <style>
-:root {
-  --bg: #f0f2f5;
-  --surface: #ffffff;
-  --surface2: #f7f8fa;
-  --border: #dde1e9;
-  --text: #0d1117;
-  --muted: #6b7588;
-  --accent: #0d1117;
-  --red: #e63950;
-  --green: #00b87a;
-  --amber: #f0a500;
-  --blue: #1a6cf6;
-  --tab-h: 78px;
-  --radius: 16px;
-  --mono: 'Roboto Mono', monospace;
-  --sans: 'Source Sans 3', sans-serif;
-}
-
-- { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: var(–sans); background: var(–bg); color: var(–text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
-
-/* ── HEADER ── */
-.header {
-background: var(–accent);
-color: white;
-padding: 14px 20px;
-display: flex;
-align-items: center;
-justify-content: space-between;
-flex-shrink: 0;
-border-bottom: 3px solid #e63950;
-}
-.header-logo { font-family: var(–mono); font-size: 11px; font-weight: 700; letter-spacing: 3px; opacity: 0.5; }
-.header-title { font-size: 13px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
-.header-badge { background: var(–red); color: white; font-family: var(–mono); font-size: 9px; padding: 3px 7px; border-radius: 4px; letter-spacing: 1px; }
-
-/* ── SCROLL AREA ── */
-.pages { flex: 1; overflow-y: auto; padding: 14px 14px 100px; scroll-behavior: smooth; }
+:root { --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; --text: #1e293b; --muted: #64748b; --accent: #0f172a; --si: #10b981; --no: #f43f5e; --warning: #f59e0b; --tab-h: 85px; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: 'IBM Plex Sans', sans-serif;}
+body { background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+.header { background: var(--accent); color: white; padding: 18px; text-align: center; font-weight: 800; font-size: 14px; letter-spacing: 1px; flex-shrink: 0; }
+.pages { flex: 1; overflow-y: auto; padding: 15px 15px 110px; }
 .page { display: none; } .page.active { display: block; }
-
-/* ── CARDS ── */
-.card {
-background: var(–surface);
-border-radius: var(–radius);
-border: 1px solid var(–border);
-margin-bottom: 12px;
-padding: 16px;
-box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.card-title {
-font-family: var(–mono);
-font-size: 9px;
-font-weight: 700;
-color: var(–muted);
-letter-spacing: 2px;
-text-transform: uppercase;
-margin-bottom: 14px;
-padding-bottom: 10px;
-border-bottom: 1px solid var(–border);
-display: flex;
-align-items: center;
-gap: 8px;
-}
-.card-title::before { content: ‘’; width: 6px; height: 6px; border-radius: 50%; background: var(–red); flex-shrink: 0; }
-
-/* ── INPUTS ── */
-.field-label { font-size: 10px; font-weight: 700; color: var(–muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; display: block; margin-left: 2px; }
-input[type=text], input[type=date], select {
-width: 100%; height: 48px; padding: 0 14px;
-border: 1.5px solid var(–border); border-radius: 10px;
-font-size: 14px; font-family: var(–sans); font-weight: 600;
-margin-bottom: 10px; outline: none; background: var(–surface2);
-color: var(–text); transition: border-color 0.2s;
-}
-input:focus, select:focus { border-color: var(–blue); background: white; }
-.field-group { display: flex; gap: 10px; align-items: flex-start; }
-.field-group > * { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.field-group input { flex: 1; }
-
-/* ── SUGGESTION BOX ── */
-.suggestion-box { display: none; background: white; border: 1.5px solid var(–border); border-radius: 10px; margin-top: -8px; margin-bottom: 10px; max-height: 140px; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-.suggestion-item { padding: 11px 14px; border-bottom: 1px solid #f1f3f6; font-size: 13px; font-weight: 700; color: var(–accent); }
-.suggestion-item:last-child { border-bottom: none; }
-.suggestion-item:active { background: var(–surface2); }
-
-/* ── TIPO BUTTONS ── */
-.tipo-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 4px; }
-.tipo-btn {
-height: 52px; border: 1.5px solid var(–border); border-radius: 10px;
-background: var(–surface2); font-size: 11px; font-weight: 800;
-color: var(–muted); letter-spacing: 0.5px; text-transform: uppercase;
-display: flex; flex-direction: column; align-items: center; justify-content: center;
-gap: 2px; transition: all 0.15s; line-height: 1.2;
-}
-.tipo-btn .tipo-icon { font-size: 18px; }
-.tipo-btn.selected { background: var(–accent); color: white; border-color: var(–accent); }
-
-/* ── ANSWER BUTTONS ── */
-.ans-group { display: flex; gap: 6px; margin-top: 6px; }
-.ans-btn {
-flex: 1; height: 40px; border: 1.5px solid var(–border); border-radius: 8px;
-background: var(–surface2); font-size: 12px; font-weight: 800;
-color: var(–muted); font-family: var(–mono); letter-spacing: 1px; transition: all 0.15s;
-}
-.active-si { background: var(–green) !important; color: white !important; border-color: var(–green) !important; }
-.active-no { background: var(–red) !important; color: white !important; border-color: var(–red) !important; }
-.active-na { background: var(–muted) !important; color: white !important; border-color: var(–muted) !important; }
-
-/* ── ITEM ROW ── */
-.item-row { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #f1f3f6; }
-.item-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-.item-text { font-size: 13px; line-height: 1.5; color: var(–text); }
-.item-num { font-family: var(–mono); font-size: 10px; color: var(–muted); font-weight: 700; }
-
-/* ── SCORE BOX ── */
-.score-card {
-background: var(–accent); color: white;
-border-radius: var(–radius); padding: 22px;
-text-align: center; margin-bottom: 12px;
-transition: background 0.5s ease;
-position: relative; overflow: hidden;
-}
-.score-card::before {
-content: ‘COMPLIANCE’;
-position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
-font-family: var(–mono); font-size: 8px; letter-spacing: 3px; opacity: 0.4;
-}
-.score-value { font-family: var(–mono); font-size: 56px; font-weight: 700; line-height: 1; margin-top: 16px; }
-.score-sub { font-size: 10px; opacity: 0.5; margin-top: 6px; font-family: var(–mono); }
-.score-bar-wrap { background: rgba(255,255,255,0.15); border-radius: 4px; height: 4px; margin-top: 16px; overflow: hidden; }
-.score-bar { height: 100%; background: white; border-radius: 4px; transition: width 0.5s ease; }
-
-/* ── SAVE BUTTON ── */
-.btn-save {
-width: 100%; height: 56px; background: var(–accent); color: white;
-border: none; border-radius: var(–radius); font-weight: 800; font-size: 14px;
-font-family: var(–sans); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px;
-transition: opacity 0.2s; position: relative; overflow: hidden;
-}
-.btn-save:disabled { opacity: 0.3; }
-.btn-save:not(:disabled):active { opacity: 0.85; }
-
-/* ── TABS ── */
-.tabs {
-display: flex; background: white; border-top: 1px solid var(–border);
-position: fixed; bottom: 0; width: 100%; height: var(–tab-h);
-padding-bottom: env(safe-area-inset-bottom); z-index: 900;
-}
-.tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(–muted); gap: 3px; transition: all 0.15s; }
-.tab-icon { font-size: 24px; }
-.tab-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-family: var(–mono); }
-.tab.active { color: var(–accent); }
-.tab.active .tab-icon { transform: scale(1.1); }
-.tab-indicator { width: 28px; height: 2px; background: transparent; border-radius: 2px; margin-bottom: 2px; transition: background 0.2s; }
-.tab.active .tab-indicator { background: var(–red); }
-
-/* ── ARCHIVE LIST ── */
-.archive-item {
-background: white; border-radius: var(–radius); border: 1px solid var(–border);
-margin-bottom: 10px; padding: 14px 16px;
-display: flex; align-items: center; gap: 14px; cursor: pointer;
-box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: transform 0.1s;
-}
-.archive-item:active { transform: scale(0.99); }
-.archive-score-badge {
-width: 52px; height: 52px; border-radius: 12px; flex-shrink: 0;
-display: flex; align-items: center; justify-content: center;
-font-family: var(–mono); font-size: 14px; font-weight: 700; color: white;
-}
-.archive-name { font-size: 14px; font-weight: 800; margin-bottom: 3px; }
-.archive-meta { font-size: 11px; color: var(–muted); font-family: var(–mono); }
-
-/* ── STATS ── */
-.stats-hero {
-background: var(–accent); border-radius: var(–radius); padding: 20px;
-display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; margin-bottom: 12px;
-}
-.stats-ring-wrap { position: relative; width: 90px; height: 90px; }
-.stats-ring-wrap svg { width: 90px; height: 90px; transform: rotate(-90deg); }
-.ring-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 7; }
-.ring-fg { fill: none; stroke-width: 7; stroke-dasharray: 251.3; stroke-dashoffset: 251.3; transition: stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1); stroke-linecap: round; }
-.stats-ring-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-family: var(–mono); font-weight: 700; font-size: 20px; color: white; }
-.stats-info { color: white; }
-.stats-big { font-family: var(–mono); font-size: 36px; font-weight: 700; line-height: 1; }
-.stats-sub { font-size: 10px; opacity: 0.5; letter-spacing: 2px; text-transform: uppercase; font-family: var(–mono); margin-top: 4px; }
-.stats-row { display: flex; gap: 10px; margin-bottom: 12px; }
-.stats-mini { flex: 1; background: white; border-radius: 12px; border: 1px solid var(–border); padding: 12px; text-align: center; }
-.stats-mini-val { font-family: var(–mono); font-size: 22px; font-weight: 700; }
-.stats-mini-lbl { font-size: 9px; color: var(–muted); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
-
-/* ── ITEM ANALYSIS ── */
-.item-stat { margin-bottom: 12px; }
-.item-stat-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
-.item-stat-text { font-size: 11px; line-height: 1.4; flex: 1; padding-right: 10px; color: var(–text); }
-.item-stat-pct { font-family: var(–mono); font-size: 12px; font-weight: 700; flex-shrink: 0; }
-.bar-track { height: 5px; background: #f0f2f5; border-radius: 3px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 3px; transition: width 1s ease; }
-
-/* ── DETAIL OVERLAY ── */
-#detail-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: var(–bg); z-index:1000; overflow-y:auto; padding:16px; }
-.detail-close { display: flex; align-items: center; gap: 8px; background: white; border: 1px solid var(–border); border-radius: 10px; padding: 10px 16px; font-weight: 800; font-size: 13px; margin-bottom: 16px; width: fit-content; color: var(–text); font-family: var(–sans); }
-.detail-hero { background: var(–accent); color: white; border-radius: var(–radius); padding: 20px; margin-bottom: 12px; }
-.detail-patient { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
-.detail-meta { font-family: var(–mono); font-size: 11px; opacity: 0.6; line-height: 1.8; }
-.detail-score-pill { display: inline-block; padding: 6px 14px; border-radius: 20px; font-family: var(–mono); font-weight: 700; font-size: 16px; margin-top: 12px; }
-.criticita-item { padding: 10px 12px; background: #fff0f3; border-left: 3px solid var(–red); border-radius: 6px; margin-bottom: 8px; font-size: 12px; line-height: 1.5; color: var(–text); }
-.btn-wa { width:100%; padding:16px; background:#25d366; color:white; border:none; border-radius:var(–radius); font-weight:800; font-size:14px; font-family: var(–sans); letter-spacing:1px; }
-.btn-del { width:100%; padding:14px; background:none; color:var(–red); border:1.5px solid var(–red); border-radius:var(–radius); font-weight:800; font-size:14px; font-family: var(–sans); margin-top:10px; }
-.empty-state { text-align:center; padding:60px 20px; color: var(–muted); }
-.empty-icon { font-size:48px; margin-bottom:12px; opacity:0.4; }
-.empty-text { font-size:13px; font-weight:600; }
+.card { background: white; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 15px; padding: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); position: relative;}
+.section-title { font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
+input { width: 100%; height: 50px; padding: 0 15px; border: 2px solid var(--border); border-radius: 12px; font-size: 15px; margin-bottom: 10px; outline: none; background: white; }
+.label-sm { font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 4px; display: block; margin-left: 5px;}
+.suggestion-box { display: none; background: white; border: 1px solid var(--border); border-radius: 12px; margin-top: -10px; margin-bottom: 10px; max-height: 150px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); z-index: 10; }
+.suggestion-item { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; font-weight: 600; color: var(--accent); }
+.ans-group { display: flex; gap: 8px; margin-top: 8px; }
+.ans-btn { flex: 1; height: 48px; border: 2px solid var(--border); border-radius: 10px; background: white; font-size: 14px; font-weight: 700; color: var(--muted); }
+.active-si { background: var(--si) !important; color: white !important; border-color: var(--si) !important; }
+.active-no { background: var(--no) !important; color: white !important; border-color: var(--no) !important; }
+.active-na { background: var(--muted) !important; color: white !important; border-color: var(--muted) !important; }
+#live-compliance-box { background: #1e293b; color: white; border-radius: 18px; padding: 20px; text-align: center; transition: background 0.5s ease; }
+#live-score { font-size: 42px; font-weight: 800; font-family: 'IBM Plex Mono'; }
+.tabs { display: flex; background: white; border-top: 1px solid var(--border); position: fixed; bottom: 0; width: 100%; height: var(--tab-h); padding-bottom: env(safe-area-inset-bottom); z-index: 900;}
+.tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); gap: 4px; }
+.tab-icon { font-size: 28px; }
+.tab-label { font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.tab.active { color: var(--accent); background: #f1f5f9; border-top: 4px solid var(--accent); }
+#detail-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:1000; overflow-y:auto; padding:20px; }
+.stats-header { background: #1e293b; color: white; border-radius: 18px; padding: 20px; display: flex; align-items: center; justify-content: space-around; margin-bottom: 15px; }
+.circle-box { position: relative; width: 80px; height: 80px; }
+.circle-box svg { transform: rotate(-90deg); width: 80px; height: 80px; }
+.circle-box circle { fill: none; stroke-width: 6; stroke-dasharray: 226; stroke-dashoffset: 226; transition: stroke-dashoffset 1s ease; stroke-linecap: round; }
+.circle-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 800; font-size: 18px; }
 </style>
-
 </head>
 <body>
 
-<div class="header">
-  <span class="header-logo">CIO·MDR</span>
-  <span class="header-title">Isolamento MDR</span>
-  <span class="header-badge">v9</span>
-</div>
+<div class="header">VALUTAZIONE ISOLAMENTO MDR</div>
 
 <div class="pages">
-
-  <!-- PAGE: FORM -->
-
-  <div class="page active" id="page-form">
-    <div class="card">
-      <div class="card-title">Anagrafica Paziente</div>
-
-```
-  <label class="field-label">Paziente (Cognome Nome)</label>
-  <input type="text" id="f-paziente" placeholder="Es. ROSSI MARIO" oninput="check()">
-
-  <label class="field-label">Unità Operativa / Reparto</label>
-  <input type="text" id="f-uo" placeholder="Es. MEDICINA INTERNA" oninput="showSuggestions(this.value)" autocomplete="off">
-  <div id="suggestion-box" class="suggestion-box"></div>
-
-  <div class="field-group">
-    <div>
-      <label class="field-label">Stanza / Letto</label>
-      <input type="text" id="f-ubicazione" placeholder="Es. 12A" oninput="check()">
-    </div>
-    <div>
-      <label class="field-label">Data Inizio Isolamento</label>
-      <input type="date" id="f-data" oninput="check()" style="margin-bottom:10px;">
-    </div>
-  </div>
-
-  <label class="field-label">Tipo di Isolamento</label>
-  <div class="tipo-group">
-    <button class="tipo-btn" id="btn-contatto" onclick="setTipo('contatto')">
-      <span class="tipo-icon">👋</span>CONTATTO
-    </button>
-    <button class="tipo-btn" id="btn-droplet" onclick="setTipo('droplet')">
-      <span class="tipo-icon">💧</span>DROPLET
-    </button>
-    <button class="tipo-btn" id="btn-aereo" onclick="setTipo('aereo')">
-      <span class="tipo-icon">🌬️</span>AEREO
-    </button>
-  </div>
-</div>
-
-<div id="survey-content"></div>
-
-<div class="score-card" id="live-compliance-box">
-  <div class="score-value" id="live-score">—</div>
-  <div class="score-sub">ITEM VALUTATI: <span id="live-count">0</span> / 23</div>
-  <div class="score-bar-wrap"><div class="score-bar" id="live-bar" style="width:0%"></div></div>
-</div>
-
-<button class="btn-save" id="btn-save" disabled onclick="save()">Registra Scheda</button>
-```
-
-  </div>
-
-  <!-- PAGE: ARCHIVE -->
-
-  <div class="page" id="page-data">
-    <div id="list-container"></div>
-  </div>
-
-  <!-- PAGE: STATS -->
-
-  <div class="page" id="page-stats">
-    <div class="stats-hero">
-      <div class="stats-ring-wrap">
-        <svg viewBox="0 0 90 90">
-          <circle class="ring-bg" cx="45" cy="45" r="40"/>
-          <circle class="ring-fg" id="stat-circle" cx="45" cy="45" r="40"/>
-        </svg>
-        <div class="stats-ring-label" id="stat-avg">0%</div>
-      </div>
-      <div class="stats-info">
-        <div class="stats-big" id="stat-tot">0</div>
-        <div class="stats-sub">Schede Totali</div>
-      </div>
+    <div class="page active" id="page-form">
+        <div class="card">
+            <div class="section-title">Anagrafica</div>
+            <input type="text" id="f-paziente" placeholder="Paziente (Cognome Nome)" oninput="check()">
+            <input type="text" id="f-uo" placeholder="Unità di assegnazione / Reparto" oninput="showSuggestions(this.value)" autocomplete="off">
+            <div id="suggestion-box" class="suggestion-box"></div>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="f-ubicazione" placeholder="Stanza / Letto" oninput="check()">
+                <div style="flex:1">
+                    <span class="label-sm">Data Inizio Isolamento</span>
+                    <input type="date" id="f-data" oninput="check()">
+                </div>
+            </div>
+            <div class="ans-group">
+                <button class="ans-btn" id="btn-contatto" onclick="setTipo('contatto')">👋 CONTATTO</button>
+                <button class="ans-btn" id="btn-droplet" onclick="setTipo('droplet')">💧 DROPLET</button>
+                <button class="ans-btn" id="btn-aereo" onclick="setTipo('aereo')">🌬️ AEREO</button>
+            </div>
+        </div>
+        <div id="survey-content"></div>
+        <div id="live-compliance-box" class="card">
+            <div id="live-score">0%</div>
+            <div style="font-size: 10px; opacity: 0.7; font-weight: 800;">COMPLIANCE</div>
+        </div>
+        <button id="btn-save" disabled onclick="save()" style="width:100%; height:60px; background:#000; color:#fff; border:none; border-radius:15px; font-weight:800; margin-bottom:40px; font-size:16px;">REGISTRA SCHEDA</button>
     </div>
 
-```
-<div class="stats-row" id="stats-minibadges">
-  <div class="stats-mini"><div class="stats-mini-val" id="stat-ok" style="color:var(--green)">0</div><div class="stats-mini-lbl">≥85%</div></div>
-  <div class="stats-mini"><div class="stats-mini-val" id="stat-warn" style="color:var(--amber)">0</div><div class="stats-mini-lbl">60–84%</div></div>
-  <div class="stats-mini"><div class="stats-mini-val" id="stat-crit" style="color:var(--red)">0</div><div class="stats-mini-lbl">&lt;60%</div></div>
+    <div class="page" id="page-data"><div class="section-title">Archivio Schede</div><div id="list-container"></div></div>
+    
+    <div class="page" id="page-stats">
+        <div class="stats-header">
+            <div class="circle-box"><svg><circle cx="40" cy="40" r="36" stroke="#334155"></circle><circle id="stat-circle" cx="40" cy="40" r="36"></circle></svg><div class="circle-text" id="stat-avg">0%</div></div>
+            <div style="text-align:center"><div id="stat-tot" style="font-size:30px; font-weight:800">0</div><div style="font-size:10px; opacity:0.6">SCHEDE TOTALI</div></div>
+        </div>
+        <div class="card"><div class="section-title">Filtro Reparto</div><select id="stat-filter-uo" style="width:100%; height:45px; border-radius:10px;" onchange="renderStats()"></select></div>
+        <div class="card"><div class="section-title">Dettaglio Item</div><div id="item-analysis"></div></div>
+    </div>
 </div>
-
-<div class="card">
-  <div class="card-title">Filtra per Reparto</div>
-  <select id="stat-filter-uo" onchange="renderStats()"></select>
-</div>
-
-<div class="card">
-  <div class="card-title">Analisi per Item</div>
-  <div id="item-analysis"></div>
-</div>
-```
-
-  </div>
-
-</div>
-
-<!-- DETAIL OVERLAY -->
 
 <div id="detail-overlay">
-  <button class="detail-close" onclick="closeDetails()">← Chiudi</button>
-  <div id="detail-content"></div>
-  <div style="margin-top:20px; display:flex; flex-direction:column; gap:0;">
-    <button class="btn-wa" id="ws-btn">📤 Invia Report WhatsApp</button>
-    <button class="btn-del" id="del-btn">Elimina Scheda</button>
-  </div>
+    <button onclick="closeDetails()" style="padding:12px 20px; border:none; background:#f1f5f9; border-radius:10px; font-weight:700; margin-bottom:20px;">← CHIUDI</button>
+    <div id="detail-content"></div>
+    <div style="margin-top:30px; display:flex; flex-direction:column; gap:12px;">
+        <button id="ws-btn" style="width:100%; padding:18px; background:#25d366; color:white; border:none; border-radius:15px; font-weight:800;">INVIA REPORT WHATSAPP</button>
+        <button id="del-btn" style="width:100%; padding:15px; background:none; color:var(--no); border:2px solid var(--no); border-radius:15px; font-weight:800;">ELIMINA SCHEDA</button>
+    </div>
 </div>
 
-<!-- TABS -->
-
 <div class="tabs">
-  <div class="tab active" onclick="nav('form', this)">
-    <div class="tab-indicator"></div>
-    <span class="tab-icon">📝</span>
-    <span class="tab-label">Nuova</span>
-  </div>
-  <div class="tab" onclick="nav('data', this)">
-    <div class="tab-indicator"></div>
-    <span class="tab-icon">📚</span>
-    <span class="tab-label">Archivio</span>
-  </div>
-  <div class="tab" onclick="nav('stats', this)">
-    <div class="tab-indicator"></div>
-    <span class="tab-icon">📊</span>
-    <span class="tab-label">Analisi</span>
-  </div>
+    <div class="tab active" onclick="nav('form', this)"><span class="tab-icon">📝</span><span class="tab-label">Nuova</span></div>
+    <div class="tab" onclick="nav('data', this)"><span class="tab-icon">📚</span><span class="tab-label">Archivio</span></div>
+    <div class="tab" onclick="nav('stats', this)"><span class="tab-icon">📊</span><span class="tab-label">Analisi</span></div>
 </div>
 
 <script>
@@ -386,235 +124,162 @@ const ITEMS = [
     {c:5, id:23, t:"E' presente e correttamente compilata la scheda di sanificazione dei presidi"}
 ];
 
-const CATS = ["All'Esterno della Stanza","All'Interno della Stanza","Personale — Inizio Attività","Personale — Fine Attività","Gestione Documentale"];
-const WA_NUM = "393278263522";
-
-let answers = {}, tipo = '';
-let db = JSON.parse(localStorage.getItem('mdr_v7_db')) || [];
+let answers = {}, tipo = '', db = JSON.parse(localStorage.getItem('mdr_v7_db')) || [];
 
 function init() {
-  let html = '';
-  [1,2,3,4,5].forEach((c, idx) => {
-    const items = ITEMS.filter(i => i.c === c);
-    html += `<div class="card"><div class="card-title">${CATS[idx]}</div>`;
-    items.forEach(i => {
-      html += `<div class="item-row">
-        <div class="item-num">Item ${i.id}</div>
-        <div class="item-text">${i.t}</div>
-        <div class="ans-group">
-          <button class="ans-btn" onclick="setAns(${i.id},'SI',this)">SI</button>
-          <button class="ans-btn" onclick="setAns(${i.id},'NO',this)">NO</button>
-          <button class="ans-btn" onclick="setAns(${i.id},'NA',this)">NA</button>
-        </div>
-      </div>`;
+    let html = '';
+    const cats = ["All'esterno della stanza", "All'interno della stanza", "Personale Sanitario Inizio Attività", "Personale Sanitario Fine Attività", "Gestione Documentale"];
+    [1,2,3,4,5].forEach((c, idx) => {
+        html += `<div class="card"><div class="section-title">${cats[idx]}</div>`;
+        ITEMS.filter(i => i.c === c).forEach(i => {
+            html += `<div style="margin-bottom:15px;"><span style="font-size:13px; display:block; margin-bottom:8px;">${i.id}. ${i.t}</span>
+                <div class="ans-group">
+                    <button class="ans-btn" onclick="setAns(${i.id},'SI',this)">SI</button>
+                    <button class="ans-btn" onclick="setAns(${i.id},'NO',this)">NO</button>
+                    <button class="ans-btn" onclick="setAns(${i.id},'NA',this)">NA</button>
+                </div></div>`;
+        });
+        html += `</div>`;
     });
-    html += `</div>`;
-  });
-  document.getElementById('survey-content').innerHTML = html;
+    document.getElementById('survey-content').innerHTML = html;
 }
 
 function showSuggestions(val) {
-  check();
-  const box = document.getElementById('suggestion-box');
-  if (!val) { box.style.display = 'none'; return; }
-  const uos = [...new Set(db.map(r => r.uo))].filter(u => u.includes(val.toUpperCase()));
-  if (uos.length) {
-    box.innerHTML = uos.map(u => `<div class="suggestion-item" onclick="selectUO('${u}')">${u}</div>`).join('');
-    box.style.display = 'block';
-  } else { box.style.display = 'none'; }
+    check();
+    const box = document.getElementById('suggestion-box');
+    if (!val) { box.style.display = 'none'; return; }
+    const uos = [...new Set(db.map(r => r.uo))].filter(u => u.includes(val.toUpperCase()));
+    if (uos.length > 0) {
+        box.innerHTML = uos.map(u => `<div class="suggestion-item" onclick="selectUO('${u}')">${u}</div>`).join('');
+        box.style.display = 'block';
+    } else { box.style.display = 'none'; }
 }
 
 function selectUO(u) {
-  document.getElementById('f-uo').value = u;
-  document.getElementById('suggestion-box').style.display = 'none';
-  check();
+    document.getElementById('f-uo').value = u;
+    document.getElementById('suggestion-box').style.display = 'none';
+    check();
 }
 
 function setTipo(v) {
-  tipo = v;
-  document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById('btn-'+v).classList.add('selected');
-  check();
+    tipo = v;
+    document.querySelectorAll('#btn-contatto, #btn-droplet, #btn-aereo').forEach(b => b.style.borderColor = '#e2e8f0');
+    document.getElementById('btn-'+v).style.borderColor = 'var(--accent)';
+    check();
 }
 
 function setAns(id, val, btn) {
-  answers[id] = val;
-  btn.parentElement.querySelectorAll('.ans-btn').forEach(b => { b.className = 'ans-btn'; });
-  btn.className = 'ans-btn active-' + val.toLowerCase();
-  calcScore(); check();
-}
-
-function scoreColor(pct) {
-  if (pct < 60) return 'var(--red)';
-  if (pct < 85) return 'var(--amber)';
-  return 'var(--green)';
+    answers[id] = val;
+    btn.parentElement.querySelectorAll('.ans-btn').forEach(b => b.className = 'ans-btn');
+    btn.className = 'ans-btn active-' + val.toLowerCase();
+    calcScore(); check();
 }
 
 function calcScore() {
-  let si = 0, total = 0;
-  Object.values(answers).forEach(v => { if(v==='SI'){si++; total++;} if(v==='NO') total++; });
-  const pct = total > 0 ? Math.round((si/total)*100) : 0;
-  const box = document.getElementById('live-compliance-box');
-  const scoreEl = document.getElementById('live-score');
-  const bar = document.getElementById('live-bar');
-  scoreEl.textContent = total > 0 ? pct + '%' : '—';
-  document.getElementById('live-count').textContent = Object.keys(answers).length;
-  bar.style.width = pct + '%';
-  if (total > 0) {
-    box.style.background = scoreColor(pct);
-  } else { box.style.background = 'var(--accent)'; }
-  return pct;
+    let si = 0, no = 0;
+    Object.values(answers).forEach(v => { if(v==='SI') si++; if(v==='NO') no++; });
+    let pct = (si+no) > 0 ? Math.round((si/(si+no))*100) : 0;
+    const box = document.getElementById('live-compliance-box');
+    document.getElementById('live-score').textContent = pct + '%';
+    if((si+no) > 0) {
+        if(pct < 60) box.style.background = 'var(--no)';
+        else if(pct < 85) box.style.background = 'var(--warning)';
+        else box.style.background = 'var(--si)';
+    } else { box.style.background = '#1e293b'; }
+    return pct;
 }
 
-function check() {
-  const p = document.getElementById('f-paziente').value.trim();
-  const uo = document.getElementById('f-uo').value.trim();
-  const d = document.getElementById('f-data').value;
-  document.getElementById('btn-save').disabled = !(p && uo && tipo && d);
+function check() { 
+    const p = document.getElementById('f-paziente').value;
+    const uo = document.getElementById('f-uo').value;
+    const d = document.getElementById('f-data').value;
+    document.getElementById('btn-save').disabled = !(p && uo && tipo && d); 
 }
 
 function save() {
-  const score = calcScore();
-  if(score < 60) {
-    alert("⚠️ ATTENZIONE\n\nValuazione critica: " + score + "%\nAttuare immediatamente le misure correttive previste dai protocolli.");
-  }
-  db.push({
-    id: Date.now(),
-    paziente: document.getElementById('f-paziente').value.trim().toUpperCase(),
-    uo: document.getElementById('f-uo').value.trim().toUpperCase(),
-    ubicazione: document.getElementById('f-ubicazione').value.trim(),
-    tipo: tipo,
-    score: score,
-    dataInizio: document.getElementById('f-data').value,
-    dataVal: new Date().toLocaleDateString('it-IT'),
-    raw: {...answers}
-  });
-  localStorage.setItem('mdr_v7_db', JSON.stringify(db));
-  location.reload();
-}
-
-function nav(p, btn) {
-  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-  document.getElementById('page-'+p).classList.add('active');
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  if(p==='data') renderData();
-  if(p==='stats') {
-    const uos = [...new Set(db.map(r => r.uo))].sort();
-    document.getElementById('stat-filter-uo').innerHTML = `<option value="ALL">Vista Globale</option>` + uos.map(u => `<option value="${u}">${u}</option>`).join('');
-    renderStats();
-  }
-}
-
-function renderData() {
-  const container = document.getElementById('list-container');
-  if (!db.length) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Nessuna valutazione registrata</div></div>`;
-    return;
-  }
-  container.innerHTML = [...db].reverse().map(r => {
-    const col = scoreColor(r.score);
-    return `<div class="archive-item" onclick="openDetails(${r.id})">
-      <div class="archive-score-badge" style="background:${col}">${r.score}%</div>
-      <div style="flex:1; min-width:0;">
-        <div class="archive-name">${r.paziente}</div>
-        <div class="archive-meta">${r.uo} · Val: ${r.dataVal}</div>
-      </div>
-      <span style="color:var(--muted); font-size:18px;">›</span>
-    </div>`;
-  }).join('');
+    const score = calcScore();
+    if(score < 60) {
+        alert("⚠️ ATTENZIONE: Valore critico rilevato (" + score + "%). È necessario attuare immediatamente le misure correttive previste dai protocolli.");
+    }
+    const uoPura = document.getElementById('f-uo').value.trim().toUpperCase();
+    db.push({ 
+        id: Date.now(), 
+        paziente: document.getElementById('f-paziente').value.toUpperCase(), 
+        uo: uoPura, 
+        score: score, 
+        dataInizio: document.getElementById('f-data').value,
+        dataVal: new Date().toLocaleDateString('it-IT'), 
+        raw: {...answers} 
+    });
+    localStorage.setItem('mdr_v7_db', JSON.stringify(db));
+    location.reload();
 }
 
 function renderStats() {
-  const filter = document.getElementById('stat-filter-uo').value;
-  const data = filter === 'ALL' ? db : db.filter(r => r.uo === filter);
-  const avg = data.length ? Math.round(data.reduce((s,c) => s+c.score, 0)/data.length) : 0;
-  const ok = data.filter(r => r.score >= 85).length;
-  const warn = data.filter(r => r.score >= 60 && r.score < 85).length;
-  const crit = data.filter(r => r.score < 60).length;
+    const filter = document.getElementById('stat-filter-uo').value;
+    const data = filter === 'ALL' ? db : db.filter(r => r.uo === filter);
+    if(!data.length) return;
+    const avg = Math.round(data.reduce((s,c)=>s+c.score,0)/data.length);
+    document.getElementById('stat-avg').textContent = avg + "%";
+    document.getElementById('stat-tot').textContent = data.length;
+    const circle = document.getElementById('stat-circle');
+    circle.style.strokeDashoffset = 226 - (226 * avg / 100);
+    circle.style.stroke = avg < 60 ? 'var(--no)' : (avg < 85 ? 'var(--warning)' : 'var(--si)');
+    document.getElementById('item-analysis').innerHTML = ITEMS.map(item => {
+        let si = 0, tot = 0;
+        data.forEach(r => { if(r.raw[item.id]==='SI'){si++; tot++;} if(r.raw[item.id]==='NO') tot++; });
+        let p = tot > 0 ? Math.round((si/tot)*100) : 0;
+        return `<div style="font-size:11px; margin-bottom:10px;"><div style="display:flex; justify-content:space-between;"><span>${item.id}. ${item.t}</span><b>${p}%</b></div><div style="height:6px; background:#f1f5f9; border-radius:3px; overflow:hidden; margin-top:4px;"><div style="width:${p}%; height:100%; background:${p < 60 ? 'var(--no)' : (p < 85 ? 'var(--warning)' : 'var(--si)')}"></div></div></div>`;
+    }).join('');
+}
 
-  document.getElementById('stat-avg').textContent = avg + '%';
-  document.getElementById('stat-tot').textContent = data.length;
-  document.getElementById('stat-ok').textContent = ok;
-  document.getElementById('stat-warn').textContent = warn;
-  document.getElementById('stat-crit').textContent = crit;
+function nav(p, btn) {
+    document.querySelectorAll('.page, .tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('page-'+p).classList.add('active');
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    if(p==='data') renderData();
+    if(p==='stats') { 
+        const uosInDb = [...new Set(db.map(r => r.uo))].sort();
+        document.getElementById('stat-filter-uo').innerHTML = `<option value="ALL">VISTA GLOBALE</option>` + uosInDb.map(u => `<option value="${u}">${u}</option>`).join('');
+        renderStats(); 
+    }
+}
 
-  const circ = document.getElementById('stat-circle');
-  const circumference = 2 * Math.PI * 40;
-  circ.style.strokeDasharray = circumference;
-  setTimeout(() => {
-    circ.style.strokeDashoffset = circumference - (circumference * avg / 100);
-  }, 100);
-  circ.style.stroke = scoreColor(avg);
-
-  if (!data.length) {
-    document.getElementById('item-analysis').innerHTML = '<div style="text-align:center; color:var(--muted); padding:20px; font-size:13px;">Nessun dato disponibile</div>';
-    return;
-  }
-
-  document.getElementById('item-analysis').innerHTML = ITEMS.map(item => {
-    let si = 0, tot = 0;
-    data.forEach(r => { if(r.raw[item.id]==='SI'){si++; tot++;} if(r.raw[item.id]==='NO') tot++; });
-    const p = tot > 0 ? Math.round((si/tot)*100) : 0;
-    const col = scoreColor(p);
-    return `<div class="item-stat">
-      <div class="item-stat-row">
-        <span class="item-stat-text"><b style="color:var(--muted);font-family:var(--mono);font-size:10px;">#${item.id}</b> ${item.t}</span>
-        <span class="item-stat-pct" style="color:${col}">${tot > 0 ? p+'%' : '—'}</span>
-      </div>
-      <div class="bar-track"><div class="bar-fill" style="width:${p}%; background:${col}"></div></div>
-    </div>`;
-  }).join('');
+function renderData() {
+    document.getElementById('list-container').innerHTML = db.length ? db.map(r => `<div class="card" onclick="openDetails(${r.id})" style="display:flex; justify-content:space-between; align-items:center;"><div><b>${r.paziente}</b><br><small>${r.uo} | Val: ${r.dataVal}</small></div><b style="font-size:20px; color:${r.score < 60 ? 'var(--no)' : 'var(--si)'}">${r.score}%</b></div>`).reverse().join('') : "Nessuna valutazione.";
 }
 
 function openDetails(id) {
-  const r = db.find(x => x.id === id);
-  const nos = ITEMS.filter(i => r.raw[i.id] === 'NO');
-  const col = scoreColor(r.score);
-  let html = `
-    <div class="detail-hero">
-      <div class="detail-patient">${r.paziente}</div>
-      <div class="detail-meta">
-        Reparto: ${r.uo}${r.ubicazione ? ' · ' + r.ubicazione : ''}<br>
-        Inizio Isolamento: ${r.dataInizio || 'N.D.'}<br>
-        Data Valutazione: ${r.dataVal}<br>
-        Tipo: ${(r.tipo || 'N.D.').toUpperCase()}
-      </div>
-      <div class="detail-score-pill" style="background:${col}; color:white">${r.score}% COMPLIANCE</div>
-    </div>
-    <div class="card">
-      <div class="card-title">Criticità Rilevate (${nos.length})</div>`;
+    const r = db.find(x => x.id === id);
+    const nos = ITEMS.filter(i => r.raw[i.id] === 'NO');
+    let html = `<h3>${r.paziente}</h3><p>Reparto: ${r.uo}<br>Data Inizio Isolamento: ${r.dataInizio || 'N.D.'}<br>Data Valutazione: ${r.dataVal}</p><br><b>Compliance: ${r.score}%</b><hr style="margin:15px 0;"><p>Criticità rilevate:</p>`;
+    nos.forEach(n => html += `<div style="color:var(--no); padding:5px 0; font-size:13px;">✘ ${n.t}</div>`);
+    document.getElementById('detail-content').innerHTML = html;
+    document.getElementById('detail-overlay').style.display = 'block';
+    
+    document.getElementById('del-btn').onclick = () => {
+        if(confirm("Eliminare definitivamente questa scheda?")) {
+            db = db.filter(x => x.id !== id);
+            localStorage.setItem('mdr_v7_db', JSON.stringify(db));
+            closeDetails();
+            renderData();
+        }
+    };
 
-  if (nos.length === 0) {
-    html += `<p style="color:var(--green); font-weight:700; font-size:13px; text-align:center; padding:10px 0;">✓ Nessuna criticità</p>`;
-  } else {
-    nos.forEach(n => { html += `<div class="criticita-item">✘ Item ${n.id} — ${n.t}</div>`; });
-  }
-  html += `</div>`;
-  document.getElementById('detail-content').innerHTML = html;
-  document.getElementById('detail-overlay').style.display = 'block';
-
-  document.getElementById('del-btn').onclick = () => {
-    if(confirm("Eliminare definitivamente questa scheda?")) {
-      db = db.filter(x => x.id !== id);
-      localStorage.setItem('mdr_v7_db', JSON.stringify(db));
-      closeDetails();
-      renderData();
-    }
-  };
-
-  document.getElementById('ws-btn').onclick = () => {
-    let m = `*VALUTAZIONE ISOLAMENTO MDR*\nPaziente: ${r.paziente}\nReparto: ${r.uo}\nInizio Isolamento: ${r.dataInizio}\nCompliance: ${r.score}%\n\n*CRITICITÀ:*\n`;
-    if(nos.length) { nos.forEach(n => m += `- ${n.t}\n`); }
-    else { m += `Nessuna criticità rilevata.`; }
-    window.open(`https://wa.me/${WA_NUM}?text=${encodeURIComponent(m)}`);
-  };
+    document.getElementById('ws-btn').onclick = () => {
+        const numeroTelefono = "393278263522"; 
+        let m = `*VALUTAZIONE ISOLAMENTO MDR*\nPaziente: ${r.paziente}\nReparto: ${r.uo}\nInizio Isolamento: ${r.dataInizio}\nCompliance: ${r.score}%\n\n*CRITICITÀ:*\n`;
+        if(nos.length > 0) {
+            nos.forEach(n => m += `- ${n.t}\n`);
+        } else {
+            m += `Nessuna criticità rilevata.`;
+        }
+        window.open(`https://wa.me/${numeroTelefono}?text=${encodeURIComponent(m)}`);
+    };
 }
-
 function closeDetails() { document.getElementById('detail-overlay').style.display = 'none'; }
-
 init();
 </script>
-
 </body>
 </html>
