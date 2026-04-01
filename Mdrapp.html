@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>MDR Pro Integrale</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"/>
+<style>
+:root { --bg: #f4f7f9; --white: #ffffff; --border: #cfd8e3; --text: #1a202c; --muted: #64748b; --accent: #0057b8; --accent-light: #e0e9f5; --si: #16a34a; --no: #dc2626; --tab-h: 75px; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: 'IBM Plex Sans', sans-serif;}
+body { background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; font-size: 16px; }
+.header { background: var(--accent); color: white; padding: 18px 15px; flex-shrink: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.pages { flex: 1; overflow-y: auto; padding: 15px 12px 100px; }
+.page { display: none; } .page.active { display: block; }
+.card { background: white; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 15px; padding: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+.section-title { background: var(--accent-light); margin: -18px -18px 12px -18px; padding: 12px 18px; font-size: 13px; font-weight: 700; color: var(--accent); text-transform: uppercase; border-radius: 14px 14px 0 0; }
+input { width: 100%; padding: 14px; border: 2px solid var(--border); border-radius: 10px; font-size: 16px; margin-bottom: 12px; outline: none; }
+.field-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; }
+.tipo-group { display: flex; gap: 8px; margin-bottom: 10px; }
+.tipo-btn { flex: 1; padding: 15px 5px; border: 2px solid var(--border); border-radius: 10px; background: white; font-size: 11px; font-weight: 700; color: var(--muted); }
+.active-contatto { background: #eff6ff !important; border-color: #3b82f6 !important; color: #1d4ed8 !important; }
+.active-droplet { background: #fdf4ff !important; border-color: #a855f7 !important; color: #7e22ce !important; }
+.active-aereo { background: #fff7ed !important; border-color: #f97316 !important; color: #c2410c !important; }
+.item-row { padding: 15px 0; border-top: 1px solid #eee; }
+.item-text { font-size: 16px; line-height: 1.4; margin-bottom: 10px; display: block; font-weight: 500; color: #333; }
+.ans-group { display: flex; gap: 10px; }
+.ans-btn { flex: 1; height: 48px; border-radius: 8px; border: 2px solid var(--border); background: white; font-size: 15px; font-weight: 700; color: var(--muted); }
+.active-si { background: #dcfce7 !important; border-color: var(--si) !important; color: var(--si) !important; }
+.active-no { background: #fee2e2 !important; border-color: var(--no) !important; color: var(--no) !important; }
+.active-na { background: #f1f5f9 !important; border-color: #94a3b8 !important; color: #475569 !important; }
+.btn-primary { background: var(--accent); color: white; width: 100%; padding: 20px; border: none; border-radius: 12px; font-weight: 700; font-size: 16px; }
+.btn-danger { background: #fee2e2; color: #dc2626; font-size: 12px; padding: 6px 12px; border-radius: 6px; border: 1px solid #fca5a5; }
+.tabs { display: flex; background: white; border-top: 1px solid var(--border); position: fixed; bottom: 0; width: 100%; height: var(--tab-h); padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
+.tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); font-size: 12px; font-weight: 600; }
+.tab.active { color: var(--accent); border-top: 4px solid var(--accent); background: var(--accent-light); }
+.error-list { background: #fff5f5; padding: 12px; border-radius: 8px; border-left: 4px solid var(--no); margin-top: 8px; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="font-weight:700; font-size:18px">Isolamento MDR v3.0</div>
+  <div style="font-size:12px; opacity:0.8">Testi originali integrali</div>
+</div>
+
+<div class="pages">
+  
+  <div class="page active" id="page-form">
+    <div class="card" style="display:flex; align-items:center; gap:20px">
+      <div style="font-family:'IBM Plex Mono'; font-size:42px; font-weight:700; color:var(--accent)" id="live-score">0%</div>
+      <div style="flex:1">
+        <div class="field-label">Compliance Corrente</div>
+        <div style="height:12px; background:#eee; border-radius:6px; overflow:hidden">
+            <div id="live-bar" style="height:100%; width:0%; background:var(--accent); transition:0.3s"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Anagrafica</div>
+      <input type="text" id="f-paziente" placeholder="Paziente (Cognome o ID) *">
+      <input type="text" id="f-uo" list="uo-list" placeholder="Unità Operativa (Scrivi o scegli) *">
+      <datalist id="uo-list"></datalist>
+      <div style="display:flex; gap:10px">
+        <input type="text" id="f-stanza" placeholder="Stanza *" style="flex:1">
+        <input type="text" id="f-letto" placeholder="Letto" style="flex:1">
+      </div>
+      <div class="field-label">Tipologia Isolamento *</div>
+      <div class="tipo-group">
+        <button class="tipo-btn" id="btn-contatto" onclick="setTipo('contatto')">👋 CONTATTO</button>
+        <button class="tipo-btn" id="btn-droplet" onclick="setTipo('droplet')">💧 DROPLET</button>
+        <button class="tipo-btn" id="btn-aereo" onclick="setTipo('aereo')">🌬️ AEREO</button>
+      </div>
+    </div>
+
+    <div id="survey-content"></div>
+    <button class="btn-primary" id="btn-save" disabled onclick="save()">SALVA VALUTAZIONE</button>
+  </div>
+
+  <div class="page" id="page-data">
+    <div class="card"><div class="section-title">Archivio Schede</div><div id="list-container"></div></div>
+  </div>
+
+  <div class="page" id="page-stats">
+    <div class="card">
+        <div class="section-title">Analisi Trend</div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px">
+            <div style="text-align:center; background:#f8fafc; padding:15px; border-radius:10px"><div style="font-size:28px; font-weight:700" id="stat-tot">0</div><div class="field-label">Schede</div></div>
+            <div style="text-align:center; background:#f0fdf4; padding:15px; border-radius:10px"><div style="font-size:28px; font-weight:700; color:var(--si)" id="stat-avg">0%</div><div class="field-label">Media</div></div>
+        </div>
+        <div class="field-label">Compliance per Reparto</div>
+        <div id="stat-reparti" style="margin-bottom:20px; font-size:15px"></div>
+        <div class="field-label">Criticità Riscontrate (Top NO)</div>
+        <div id="stat-errors"></div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="nav('form', this)">📝<br>Nuova</div>
+  <div class="tab" onclick="nav('data', this)">📚<br>Archivio</div>
+  <div class="tab" onclick="nav('stats', this)">📊<br>Analisi</div>
+</div>
+
+<script>
+const ITEMS = [
+  {c:1, id:1, t:"Presenza cartello indicatore all'ingresso della stanza (su entrambi i versanti della porta)"},
+  {c:1, id:2, t:"Presenza all'esterno della stanza carrello/ripiano dedicato con DPI"},
+  {c:1, id:3, t:"Assenza di materiale e/o presidi non necessari"},
+  {c:2, id:4, t:"Presenza contenitore per rifiuti sanitari infetti"},
+  {c:2, id:5, t:"Presenza contenitore sacchi speciali per la biancheria idrosolubili"},
+  {c:2, id:6, t:"Presenza materiale sanitario dedicato e/o monouso per il paziente"},
+  {c:2, id:7, t:"Uso dedicato di servizi igienici in relazione al grado di autosufficienza"},
+  {c:3, id:8, t:"DPI previsti adottati correttamente dal personale medico"},
+  {c:3, id:9, t:"Corretta igiene mani del personale medico"},
+  {c:3, id:10, t:"DPI previsti adottati correttamente dal personale infermieristico"},
+  {c:3, id:11, t:"Corretta igiene mani del personale infermieristico"},
+  {c:3, id:12, t:"DPI previsti adottati correttamente dal personale di assistenza"},
+  {c:3, id:13, t:"Corretta igiene mani del personale di assistenza"},
+  {c:3, id:14, t:"Viene eseguita educazione sanitaria (se paziente autosufficiente)"},
+  {c:4, id:15, t:"DPI usati tolti e smaltiti correttamente dal personale medico"},
+  {c:4, id:16, t:"Corretta igiene mani del personale medico"},
+  {c:4, id:17, t:"DPI usati tolti e smaltiti correttamente dal personale infermieristico"},
+  {c:4, id:18, t:"Corretta igiene mani del personale infermieristico"},
+  {c:4, id:19, t:"DPI usati tolti e smaltiti correttamente dal personale di assistenza"},
+  {c:4, id:20, t:"Corretta igiene mani del personale di assistenza"},
+  {c:5, id:21, t:"Informazione positività CRE in documentazione chiara e condivisa"},
+  {c:5, id:22, t:"Scheda sanificazione per ditta pulizie compilata"},
+  {c:5, id:23, t:"Scheda sanificazione presidi compilata"}
+];
+
+let answers = {};
+let tipo = '';
+let db = JSON.parse(localStorage.getItem('mdr_final_db')) || [];
+
+function init() {
+  let html = '';
+  const cats = ["1. All'esterno della stanza", "2. All'interno della stanza", "3. Personale (Inizio attività)", "4. Personale (Fine attività)", "5. Gestione documentale"];
+  [1,2,3,4,5].forEach((c, idx) => {
+    html += `<div class="card"><div class="section-title">${cats[idx]}</div>`;
+    ITEMS.filter(i => i.c === c).forEach(i => {
+      html += `<div class="item-row"><span class="item-text">${i.id}. ${i.t}</span>
+        <div class="ans-group">
+          <button class="ans-btn" onclick="setAns(${i.id},'SI',this)">SI</button>
+          <button class="ans-btn" onclick="setAns(${i.id},'NO',this)">NO</button>
+          <button class="ans-btn" onclick="setAns(${i.id},'NA',this)">NA</button>
+        </div></div>`;
+    });
+    html += `</div>`;
+  });
+  document.getElementById('survey-content').innerHTML = html;
+  updateUO();
+}
+
+function updateUO() {
+  const uos = [...new Set(db.map(r => r.uo))];
+  document.getElementById('uo-list').innerHTML = uos.map(u => `<option value="${u}">`).join('');
+}
+
+function setTipo(v) {
+  tipo = v;
+  document.querySelectorAll('.tipo-btn').forEach(b => b.className = 'tipo-btn');
+  document.getElementById('btn-'+v).className = 'tipo-btn active-'+v;
+  check();
+}
+
+function setAns(id, val, btn) {
+  answers[id] = val;
+  btn.parentElement.querySelectorAll('.ans-btn').forEach(b => b.className = 'ans-btn');
+  btn.className = 'ans-btn active-' + val.toLowerCase();
+  calcScore();
+  check();
+}
+
+function calcScore() {
+  let si = 0, no = 0;
+  Object.values(answers).forEach(v => { if(v==='SI') si++; if(v==='NO') no++; });
+  let pct = (si+no) > 0 ? Math.round((si/(si+no))*100) : 0;
+  document.getElementById('live-score').textContent = pct + '%';
+  document.getElementById('live-bar').style.width = pct + '%';
+  return pct;
+}
+
+function check() {
+  const p = document.getElementById('f-paziente').value;
+  const u = document.getElementById('f-uo').value;
+  document.getElementById('btn-save').disabled = !(p && u && tipo);
+}
+
+function save() {
+  const rec = {
+    id: Date.now(),
+    paziente: document.getElementById('f-paziente').value,
+    uo: document.getElementById('f-uo').value.toUpperCase(),
+    stanza: document.getElementById('f-stanza').value,
+    tipo: tipo,
+    score: calcScore(),
+    data: new Date().toLocaleDateString('it-IT'),
+    raw: {...answers}
+  };
+  db.push(rec);
+  localStorage.setItem('mdr_final_db', JSON.stringify(db));
+  alert("✅ Salvato!");
+  location.reload();
+}
+
+function nav(p, btn) {
+  document.querySelectorAll('.page, .tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  btn.classList.add('active');
+  if(p==='data') renderData();
+  if(p==='stats') renderStats();
+}
+
+function deleteRec(id) {
+  if(confirm("Eliminare definitivamente?")) {
+    db = db.filter(r => r.id !== id);
+    localStorage.setItem('mdr_final_db', JSON.stringify(db));
+    renderData();
+  }
+}
+
+function renderData() {
+  const c = document.getElementById('list-container');
+  c.innerHTML = db.length ? db.map(r => `
+    <div class="item-row" style="display:flex; justify-content:space-between; align-items:center">
+      <div style="flex:1">
+        <b>${r.paziente}</b> [${r.tipo}]<br>
+        <small>${r.uo} | Stanza ${r.stanza} | ${r.data}</small>
+      </div>
+      <div style="text-align:right">
+        <div style="font-weight:700; color:var(--accent); font-size:18px">${r.score}%</div>
+        <button class="btn-danger" onclick="deleteRec(${r.id})">Rimuovi</button>
+      </div>
+    </div>`).reverse().join('') : "Nessun dato presente";
+}
+
+function renderStats() {
+  if(!db.length) return;
+  document.getElementById('stat-tot').textContent = db.length;
+  let avg = Math.round(db.reduce((s, c) => s + c.score, 0) / db.length);
+  document.getElementById('stat-avg').textContent = avg + '%';
+
+  const reps = {};
+  db.forEach(r => { if(!reps[r.uo]) reps[r.uo] = []; reps[r.uo].push(r.score); });
+  document.getElementById('stat-reparti').innerHTML = Object.keys(reps).map(k => {
+    let m = Math.round(reps[k].reduce((a,b)=>a+b)/reps[k].length);
+    return `<div style="margin-bottom:6px"><b>${k}</b>: <span style="color:var(--accent)">${m}%</span></div>`;
+  }).join('');
+
+  const errors = {};
+  db.forEach(r => { 
+    Object.entries(r.raw).forEach(([id, val]) => { 
+      if(val === 'NO') errors[id] = (errors[id] || 0) + 1;
+    });
+  });
+  const top = Object.entries(errors).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  document.getElementById('stat-errors').innerHTML = top.length ? top.map(e => {
+    let itm = ITEMS.find(i => i.id == e[0]);
+    return `<div class="error-list">⚠️ ${itm.t} (Segnalato ${e[1]} volte)</div>`;
+  }).join('') : "Ottimo: nessun 'NO' registrato.";
+}
+
+init();
+</script>
+</body>
+</html>
