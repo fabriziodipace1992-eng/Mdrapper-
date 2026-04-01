@@ -6,36 +6,251 @@
 <title>Verifica Isolamento MDR v8.2</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"/>
 <style>
-:root { --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; --text: #1e293b; --muted: #64748b; --accent: #0f172a; --si: #10b981; --no: #f43f5e; --warning: #f59e0b; --tab-h: 85px; }
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: 'IBM Plex Sans', sans-serif;}
-body { background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
-.header { background: var(--accent); color: white; padding: 18px; text-align: center; font-weight: 800; font-size: 14px; letter-spacing: 1px; flex-shrink: 0; }
-.pages { flex: 1; overflow-y: auto; padding: 15px 15px 110px; }
-.page { display: none; } .page.active { display: block; }
-.card { background: white; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 15px; padding: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); position: relative;}
-.section-title { font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
-input { width: 100%; height: 50px; padding: 0 15px; border: 2px solid var(--border); border-radius: 12px; font-size: 15px; margin-bottom: 10px; outline: none; background: white; }
-.label-sm { font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 4px; display: block; margin-left: 5px;}
-.suggestion-box { display: none; background: white; border: 1px solid var(--border); border-radius: 12px; margin-top: -10px; margin-bottom: 10px; max-height: 150px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); z-index: 10; }
-.suggestion-item { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; font-weight: 600; color: var(--accent); }
-.ans-group { display: flex; gap: 8px; margin-top: 8px; }
-.ans-btn { flex: 1; height: 48px; border: 2px solid var(--border); border-radius: 10px; background: white; font-size: 14px; font-weight: 700; color: var(--muted); }
-.active-si { background: var(--si) !important; color: white !important; border-color: var(--si) !important; }
-.active-no { background: var(--no) !important; color: white !important; border-color: var(--no) !important; }
-.active-na { background: var(--muted) !important; color: white !important; border-color: var(--muted) !important; }
-#live-compliance-box { background: #1e293b; color: white; border-radius: 18px; padding: 20px; text-align: center; transition: background 0.5s ease; }
-#live-score { font-size: 42px; font-weight: 800; font-family: 'IBM Plex Mono'; }
-.tabs { display: flex; background: white; border-top: 1px solid var(--border); position: fixed; bottom: 0; width: 100%; height: var(--tab-h); padding-bottom: env(safe-area-inset-bottom); z-index: 900;}
-.tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); gap: 4px; }
-.tab-icon { font-size: 28px; }
-.tab-label { font-size: 11px; font-weight: 700; text-transform: uppercase; }
-.tab.active { color: var(--accent); background: #f1f5f9; border-top: 4px solid var(--accent); }
-#detail-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:1000; overflow-y:auto; padding:20px; }
-.stats-header { background: #1e293b; color: white; border-radius: 18px; padding: 20px; display: flex; align-items: center; justify-content: space-around; margin-bottom: 15px; }
-.circle-box { position: relative; width: 80px; height: 80px; }
-.circle-box svg { transform: rotate(-90deg); width: 80px; height: 80px; }
-.circle-box circle { fill: none; stroke-width: 6; stroke-dasharray: 226; stroke-dashoffset: 226; transition: stroke-dashoffset 1s ease; stroke-linecap: round; }
-.circle-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 800; font-size: 18px; }
+:root {
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --muted: #64748b;
+    --accent: #0f172a;
+    --si: #10b981;
+    --no: #f43f5e;
+    --warning: #f59e0b;
+    --tab-h: 85px;
+}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+    font-family: 'IBM Plex Sans', sans-serif;
+}
+body {
+    background: var(--bg);
+    color: var(--text);
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.header {
+    background: var(--accent);
+    color: white;
+    padding: 18px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+}
+.pages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px 15px 110px;
+}
+.page {
+    display: none;
+}
+.page.active {
+    display: block;
+}
+.card {
+    background: white;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    margin-bottom: 15px;
+    padding: 18px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    position: relative;
+}
+.section-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 5px;
+}
+input, select {
+    width: 100%;
+    height: 50px;
+    padding: 0 15px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 15px;
+    margin-bottom: 10px;
+    outline: none;
+    background: white;
+    color: var(--text);
+}
+input[type="date"] {
+    height: 50px;
+    padding: 0 15px;
+    font-size: 15px;
+    appearance: none;
+    -webkit-appearance: none;
+    display: block;
+    line-height: normal;
+}
+input[type="date"]::-webkit-date-and-time-value {
+    text-align: left;
+}
+.label-sm {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 4px;
+    display: block;
+    margin-left: 5px;
+}
+.suggestion-box {
+    display: none;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    z-index: 10;
+}
+.suggestion-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+}
+.ans-group {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+.ans-btn {
+    flex: 1;
+    height: 48px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--muted);
+}
+.active-si {
+    background: var(--si) !important;
+    color: white !important;
+    border-color: var(--si) !important;
+}
+.active-no {
+    background: var(--no) !important;
+    color: white !important;
+    border-color: var(--no) !important;
+}
+.active-na {
+    background: var(--muted) !important;
+    color: white !important;
+    border-color: var(--muted) !important;
+}
+#live-compliance-box {
+    background: #1e293b;
+    color: white;
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+    transition: background 0.5s ease;
+}
+#live-score {
+    font-size: 42px;
+    font-weight: 800;
+    font-family: 'IBM Plex Mono', monospace;
+}
+.tabs {
+    display: flex;
+    background: white;
+    border-top: 1px solid var(--border);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: var(--tab-h);
+    padding-bottom: env(safe-area-inset-bottom);
+    z-index: 900;
+}
+.tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    gap: 4px;
+}
+.tab-icon {
+    font-size: 28px;
+}
+.tab-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.tab.active {
+    color: var(--accent);
+    background: #f1f5f9;
+    border-top: 4px solid var(--accent);
+}
+#detail-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 20px;
+}
+.stats-header {
+    background: #1e293b;
+    color: white;
+    border-radius: 18px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 15px;
+}
+.circle-box {
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+.circle-box svg {
+    transform: rotate(-90deg);
+    width: 80px;
+    height: 80px;
+}
+.circle-box circle {
+    fill: none;
+    stroke-width: 6;
+    stroke-dasharray: 226;
+    stroke-dashoffset: 226;
+    transition: stroke-dashoffset 1s ease;
+    stroke-linecap: round;
+}
+.circle-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 800;
+    font-size: 18px;
+}
+.muted-empty {
+    font-size: 12px;
+    color: var(--muted);
+}
 </style>
 </head>
 <body>
@@ -49,36 +264,63 @@ input { width: 100%; height: 50px; padding: 0 15px; border: 2px solid var(--bord
             <input type="text" id="f-paziente" placeholder="Paziente (Cognome Nome)" oninput="check()">
             <input type="text" id="f-uo" placeholder="Unità di assegnazione / Reparto" oninput="showSuggestions(this.value)" autocomplete="off">
             <div id="suggestion-box" class="suggestion-box"></div>
-            <div style="display:flex; gap:10px;">
-                <input type="text" id="f-ubicazione" placeholder="Stanza / Letto" oninput="check()">
-                <div style="flex:1">
+
+            <div style="display:flex; gap:10px; align-items:flex-end;">
+                <input type="text" id="f-ubicazione" placeholder="Stanza / Letto" oninput="check()" style="flex:1; margin-bottom:0;">
+                <div style="flex:1;">
                     <span class="label-sm">Data Inizio Isolamento</span>
-                    <input type="date" id="f-data" oninput="check()">
+                    <input type="date" id="f-data" oninput="check()" style="margin-bottom:0;">
                 </div>
             </div>
+
             <div class="ans-group">
                 <button class="ans-btn" id="btn-contatto" onclick="setTipo('contatto')">👋 CONTATTO</button>
                 <button class="ans-btn" id="btn-droplet" onclick="setTipo('droplet')">💧 DROPLET</button>
                 <button class="ans-btn" id="btn-aereo" onclick="setTipo('aereo')">🌬️ AEREO</button>
             </div>
         </div>
+
         <div id="survey-content"></div>
+
         <div id="live-compliance-box" class="card">
             <div id="live-score">0%</div>
-            <div style="font-size: 10px; opacity: 0.7; font-weight: 800;">COMPLIANCE</div>
+            <div style="font-size:10px; opacity:0.7; font-weight:800;">COMPLIANCE</div>
         </div>
-        <button id="btn-save" disabled onclick="save()" style="width:100%; height:60px; background:#000; color:#fff; border:none; border-radius:15px; font-weight:800; margin-bottom:40px; font-size:16px;">REGISTRA SCHEDA</button>
+
+        <button id="btn-save" disabled onclick="save()" style="width:100%; height:60px; background:#000; color:#fff; border:none; border-radius:15px; font-weight:800; margin-bottom:40px; font-size:16px;">
+            REGISTRA SCHEDA
+        </button>
     </div>
 
-    <div class="page" id="page-data"><div class="section-title">Archivio Schede</div><div id="list-container"></div></div>
-    
+    <div class="page" id="page-data">
+        <div class="section-title">Archivio Schede</div>
+        <div id="list-container"></div>
+    </div>
+
     <div class="page" id="page-stats">
         <div class="stats-header">
-            <div class="circle-box"><svg><circle cx="40" cy="40" r="36" stroke="#334155"></circle><circle id="stat-circle" cx="40" cy="40" r="36"></circle></svg><div class="circle-text" id="stat-avg">0%</div></div>
-            <div style="text-align:center"><div id="stat-tot" style="font-size:30px; font-weight:800">0</div><div style="font-size:10px; opacity:0.6">SCHEDE TOTALI</div></div>
+            <div class="circle-box">
+                <svg>
+                    <circle cx="40" cy="40" r="36" stroke="#334155"></circle>
+                    <circle id="stat-circle" cx="40" cy="40" r="36"></circle>
+                </svg>
+                <div class="circle-text" id="stat-avg">0%</div>
+            </div>
+            <div style="text-align:center">
+                <div id="stat-tot" style="font-size:30px; font-weight:800">0</div>
+                <div style="font-size:10px; opacity:0.6">SCHEDE TOTALI</div>
+            </div>
         </div>
-        <div class="card"><div class="section-title">Filtro Reparto</div><select id="stat-filter-uo" style="width:100%; height:45px; border-radius:10px;" onchange="renderStats()"></select></div>
-        <div class="card"><div class="section-title">Dettaglio Item</div><div id="item-analysis"></div></div>
+
+        <div class="card">
+            <div class="section-title">Filtro Reparto</div>
+            <select id="stat-filter-uo" onchange="renderStats()"></select>
+        </div>
+
+        <div class="card">
+            <div class="section-title">Dettaglio Item</div>
+            <div id="item-analysis"></div>
+        </div>
     </div>
 </div>
 
@@ -92,12 +334,23 @@ input { width: 100%; height: 50px; padding: 0 15px; border: 2px solid var(--bord
 </div>
 
 <div class="tabs">
-    <div class="tab active" onclick="nav('form', this)"><span class="tab-icon">📝</span><span class="tab-label">Nuova</span></div>
-    <div class="tab" onclick="nav('data', this)"><span class="tab-icon">📚</span><span class="tab-label">Archivio</span></div>
-    <div class="tab" onclick="nav('stats', this)"><span class="tab-icon">📊</span><span class="tab-label">Analisi</span></div>
+    <div class="tab active" onclick="nav('form', this)">
+        <span class="tab-icon">📝</span>
+        <span class="tab-label">Nuova</span>
+    </div>
+    <div class="tab" onclick="nav('data', this)">
+        <span class="tab-icon">📚</span>
+        <span class="tab-label">Archivio</span>
+    </div>
+    <div class="tab" onclick="nav('stats', this)">
+        <span class="tab-icon">📊</span>
+        <span class="tab-label">Analisi</span>
+    </div>
 </div>
 
 <script>
+const DB_KEY = 'mdr_v8_2_db';
+
 const ITEMS = [
     {c:1, id:1, t:"Presenza cartello indicatore all'ingresso della stanza (su entrambe i versanti della porta)"},
     {c:1, id:2, t:"Presenza all'esterno della stanza carrello/ripiano dedicato con DPI"},
@@ -124,35 +377,58 @@ const ITEMS = [
     {c:5, id:23, t:"E' presente e correttamente compilata la scheda di sanificazione dei presidi"}
 ];
 
-let answers = {}, tipo = '', db = JSON.parse(localStorage.getItem('mdr_v7_db')) || [];
+let answers = {};
+let tipo = '';
+let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
 
 function init() {
     let html = '';
-    const cats = ["All'esterno della stanza", "All'interno della stanza", "Personale Sanitario Inizio Attività", "Personale Sanitario Fine Attività", "Gestione Documentale"];
+    const cats = [
+        "All'esterno della stanza",
+        "All'interno della stanza",
+        "Personale Sanitario Inizio Attività",
+        "Personale Sanitario Fine Attività",
+        "Gestione Documentale"
+    ];
+
     [1,2,3,4,5].forEach((c, idx) => {
         html += `<div class="card"><div class="section-title">${cats[idx]}</div>`;
         ITEMS.filter(i => i.c === c).forEach(i => {
-            html += `<div style="margin-bottom:15px;"><span style="font-size:13px; display:block; margin-bottom:8px;">${i.id}. ${i.t}</span>
-                <div class="ans-group">
-                    <button class="ans-btn" onclick="setAns(${i.id},'SI',this)">SI</button>
-                    <button class="ans-btn" onclick="setAns(${i.id},'NO',this)">NO</button>
-                    <button class="ans-btn" onclick="setAns(${i.id},'NA',this)">NA</button>
-                </div></div>`;
+            html += `
+                <div style="margin-bottom:15px;">
+                    <span style="font-size:13px; display:block; margin-bottom:8px;">${i.id}. ${i.t}</span>
+                    <div class="ans-group">
+                        <button class="ans-btn" onclick="setAns(${i.id}, 'SI', this)">SI</button>
+                        <button class="ans-btn" onclick="setAns(${i.id}, 'NO', this)">NO</button>
+                        <button class="ans-btn" onclick="setAns(${i.id}, 'NA', this)">NA</button>
+                    </div>
+                </div>
+            `;
         });
         html += `</div>`;
     });
+
     document.getElementById('survey-content').innerHTML = html;
 }
 
 function showSuggestions(val) {
     check();
     const box = document.getElementById('suggestion-box');
-    if (!val) { box.style.display = 'none'; return; }
-    const uos = [...new Set(db.map(r => r.uo))].filter(u => u.includes(val.toUpperCase()));
+
+    if (!val) {
+        box.style.display = 'none';
+        return;
+    }
+
+    const query = val.trim().toUpperCase();
+    const uos = [...new Set(db.map(r => r.uo))].filter(u => u.includes(query));
+
     if (uos.length > 0) {
-        box.innerHTML = uos.map(u => `<div class="suggestion-item" onclick="selectUO('${u}')">${u}</div>`).join('');
+        box.innerHTML = uos.map(u => `<div class="suggestion-item" onclick="selectUO('${u.replace(/'/g, "\\'")}')">${u}</div>`).join('');
         box.style.display = 'block';
-    } else { box.style.display = 'none'; }
+    } else {
+        box.style.display = 'none';
+    }
 }
 
 function selectUO(u) {
@@ -163,8 +439,19 @@ function selectUO(u) {
 
 function setTipo(v) {
     tipo = v;
-    document.querySelectorAll('#btn-contatto, #btn-droplet, #btn-aereo').forEach(b => b.style.borderColor = '#e2e8f0');
-    document.getElementById('btn-'+v).style.borderColor = 'var(--accent)';
+
+    document.querySelectorAll('#btn-contatto, #btn-droplet, #btn-aereo').forEach(b => {
+        b.classList.remove('active-si');
+        b.style.borderColor = '#e2e8f0';
+        b.style.color = 'var(--muted)';
+        b.style.background = 'white';
+    });
+
+    const btn = document.getElementById('btn-' + v);
+    btn.style.borderColor = 'var(--accent)';
+    btn.style.color = 'white';
+    btn.style.background = 'var(--accent)';
+
     check();
 }
 
@@ -172,114 +459,230 @@ function setAns(id, val, btn) {
     answers[id] = val;
     btn.parentElement.querySelectorAll('.ans-btn').forEach(b => b.className = 'ans-btn');
     btn.className = 'ans-btn active-' + val.toLowerCase();
-    calcScore(); check();
+    calcScore();
+    check();
 }
 
 function calcScore() {
-    let si = 0, no = 0;
-    Object.values(answers).forEach(v => { if(v==='SI') si++; if(v==='NO') no++; });
-    let pct = (si+no) > 0 ? Math.round((si/(si+no))*100) : 0;
+    let si = 0;
+    let no = 0;
+
+    Object.values(answers).forEach(v => {
+        if (v === 'SI') si++;
+        if (v === 'NO') no++;
+    });
+
+    const pct = (si + no) > 0 ? Math.round((si / (si + no)) * 100) : 0;
     const box = document.getElementById('live-compliance-box');
+
     document.getElementById('live-score').textContent = pct + '%';
-    if((si+no) > 0) {
-        if(pct < 60) box.style.background = 'var(--no)';
-        else if(pct < 85) box.style.background = 'var(--warning)';
+
+    if ((si + no) > 0) {
+        if (pct < 60) box.style.background = 'var(--no)';
+        else if (pct < 85) box.style.background = 'var(--warning)';
         else box.style.background = 'var(--si)';
-    } else { box.style.background = '#1e293b'; }
+    } else {
+        box.style.background = '#1e293b';
+    }
+
     return pct;
 }
 
-function check() { 
-    const p = document.getElementById('f-paziente').value;
-    const uo = document.getElementById('f-uo').value;
+function check() {
+    const p = document.getElementById('f-paziente').value.trim();
+    const uo = document.getElementById('f-uo').value.trim();
     const d = document.getElementById('f-data').value;
-    document.getElementById('btn-save').disabled = !(p && uo && tipo && d); 
+    const allAnswered = ITEMS.every(item => answers[item.id]);
+
+    document.getElementById('btn-save').disabled = !(p && uo && tipo && d && allAnswered);
 }
 
 function save() {
     const score = calcScore();
-    if(score < 60) {
+
+    if (score < 60) {
         alert("⚠️ ATTENZIONE: Valore critico rilevato (" + score + "%). È necessario attuare immediatamente le misure correttive previste dai protocolli.");
     }
-    const uoPura = document.getElementById('f-uo').value.trim().toUpperCase();
-    db.push({ 
-        id: Date.now(), 
-        paziente: document.getElementById('f-paziente').value.toUpperCase(), 
-        uo: uoPura, 
-        score: score, 
+
+    const record = {
+        id: Date.now(),
+        paziente: document.getElementById('f-paziente').value.trim().toUpperCase(),
+        uo: document.getElementById('f-uo').value.trim().toUpperCase(),
+        ubicazione: document.getElementById('f-ubicazione').value.trim().toUpperCase(),
+        tipo: tipo,
+        score: score,
         dataInizio: document.getElementById('f-data').value,
-        dataVal: new Date().toLocaleDateString('it-IT'), 
-        raw: {...answers} 
-    });
-    localStorage.setItem('mdr_v7_db', JSON.stringify(db));
+        dataVal: new Date().toLocaleDateString('it-IT'),
+        raw: { ...answers }
+    };
+
+    db.push(record);
+    localStorage.setItem(DB_KEY, JSON.stringify(db));
     location.reload();
 }
 
 function renderStats() {
-    const filter = document.getElementById('stat-filter-uo').value;
+    const select = document.getElementById('stat-filter-uo');
+    const filter = select ? select.value : 'ALL';
     const data = filter === 'ALL' ? db : db.filter(r => r.uo === filter);
-    if(!data.length) return;
-    const avg = Math.round(data.reduce((s,c)=>s+c.score,0)/data.length);
+
+    if (!data.length) {
+        document.getElementById('stat-avg').textContent = '0%';
+        document.getElementById('stat-tot').textContent = '0';
+        document.getElementById('item-analysis').innerHTML = '<div class="muted-empty">Nessun dato disponibile.</div>';
+        document.getElementById('stat-circle').style.strokeDashoffset = 226;
+        document.getElementById('stat-circle').style.stroke = '#334155';
+        return;
+    }
+
+    const avg = Math.round(data.reduce((s, c) => s + c.score, 0) / data.length);
     document.getElementById('stat-avg').textContent = avg + "%";
     document.getElementById('stat-tot').textContent = data.length;
+
     const circle = document.getElementById('stat-circle');
     circle.style.strokeDashoffset = 226 - (226 * avg / 100);
     circle.style.stroke = avg < 60 ? 'var(--no)' : (avg < 85 ? 'var(--warning)' : 'var(--si)');
+
     document.getElementById('item-analysis').innerHTML = ITEMS.map(item => {
-        let si = 0, tot = 0;
-        data.forEach(r => { if(r.raw[item.id]==='SI'){si++; tot++;} if(r.raw[item.id]==='NO') tot++; });
-        let p = tot > 0 ? Math.round((si/tot)*100) : 0;
-        return `<div style="font-size:11px; margin-bottom:10px;"><div style="display:flex; justify-content:space-between;"><span>${item.id}. ${item.t}</span><b>${p}%</b></div><div style="height:6px; background:#f1f5f9; border-radius:3px; overflow:hidden; margin-top:4px;"><div style="width:${p}%; height:100%; background:${p < 60 ? 'var(--no)' : (p < 85 ? 'var(--warning)' : 'var(--si)')}"></div></div></div>`;
+        let si = 0;
+        let tot = 0;
+
+        data.forEach(r => {
+            if (r.raw[item.id] === 'SI') {
+                si++;
+                tot++;
+            } else if (r.raw[item.id] === 'NO') {
+                tot++;
+            }
+        });
+
+        const p = tot > 0 ? Math.round((si / tot) * 100) : 0;
+        const color = p < 60 ? 'var(--no)' : (p < 85 ? 'var(--warning)' : 'var(--si)');
+
+        return `
+            <div style="font-size:11px; margin-bottom:10px;">
+                <div style="display:flex; justify-content:space-between; gap:10px;">
+                    <span>${item.id}. ${item.t}</span>
+                    <b>${p}%</b>
+                </div>
+                <div style="height:6px; background:#f1f5f9; border-radius:3px; overflow:hidden; margin-top:4px;">
+                    <div style="width:${p}%; height:100%; background:${color};"></div>
+                </div>
+            </div>
+        `;
     }).join('');
 }
 
 function nav(p, btn) {
-    document.querySelectorAll('.page, .tab').forEach(el => el.classList.remove('active'));
-    document.getElementById('page-'+p).classList.add('active');
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+
+    document.getElementById('page-' + p).classList.add('active');
     btn.classList.add('active');
-    if(p==='data') renderData();
-    if(p==='stats') { 
+
+    if (p === 'data') renderData();
+
+    if (p === 'stats') {
         const uosInDb = [...new Set(db.map(r => r.uo))].sort();
-        document.getElementById('stat-filter-uo').innerHTML = `<option value="ALL">VISTA GLOBALE</option>` + uosInDb.map(u => `<option value="${u}">${u}</option>`).join('');
-        renderStats(); 
+        document.getElementById('stat-filter-uo').innerHTML =
+            `<option value="ALL">VISTA GLOBALE</option>` +
+            uosInDb.map(u => `<option value="${u}">${u}</option>`).join('');
+        renderStats();
     }
 }
 
 function renderData() {
-    document.getElementById('list-container').innerHTML = db.length ? db.map(r => `<div class="card" onclick="openDetails(${r.id})" style="display:flex; justify-content:space-between; align-items:center;"><div><b>${r.paziente}</b><br><small>${r.uo} | Val: ${r.dataVal}</small></div><b style="font-size:20px; color:${r.score < 60 ? 'var(--no)' : 'var(--si)'}">${r.score}%</b></div>`).reverse().join('') : "Nessuna valutazione.";
+    const container = document.getElementById('list-container');
+
+    if (!db.length) {
+        container.innerHTML = "Nessuna valutazione.";
+        return;
+    }
+
+    container.innerHTML = db.slice().reverse().map(r => `
+        <div class="card" onclick="openDetails(${r.id})" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+            <div>
+                <b>${r.paziente}</b><br>
+                <small>${r.uo} | Val: ${r.dataVal}</small>
+            </div>
+            <b style="font-size:20px; color:${r.score < 60 ? 'var(--no)' : 'var(--si)'}">${r.score}%</b>
+        </div>
+    `).join('');
 }
 
 function openDetails(id) {
     const r = db.find(x => x.id === id);
+    if (!r) return;
+
     const nos = ITEMS.filter(i => r.raw[i.id] === 'NO');
-    let html = `<h3>${r.paziente}</h3><p>Reparto: ${r.uo}<br>Data Inizio Isolamento: ${r.dataInizio || 'N.D.'}<br>Data Valutazione: ${r.dataVal}</p><br><b>Compliance: ${r.score}%</b><hr style="margin:15px 0;"><p>Criticità rilevate:</p>`;
-    nos.forEach(n => html += `<div style="color:var(--no); padding:5px 0; font-size:13px;">✘ ${n.t}</div>`);
+
+    const tipoLabel = r.tipo ? r.tipo.toUpperCase() : 'N.D.';
+
+    let html = `
+        <h3 style="margin-bottom:12px;">${r.paziente}</h3>
+        <p style="line-height:1.6;">
+            Reparto: ${r.uo}<br>
+            Ubicazione: ${r.ubicazione || 'N.D.'}<br>
+            Tipo isolamento: ${tipoLabel}<br>
+            Data Inizio Isolamento: ${r.dataInizio || 'N.D.'}<br>
+            Data Valutazione: ${r.dataVal}
+        </p>
+        <br>
+        <b>Compliance: ${r.score}%</b>
+        <hr style="margin:15px 0;">
+        <p style="margin-bottom:10px;"><b>Criticità rilevate:</b></p>
+    `;
+
+    if (nos.length > 0) {
+        nos.forEach(n => {
+            html += `<div style="color:var(--no); padding:5px 0; font-size:13px;">✘ ${n.t}</div>`;
+        });
+    } else {
+        html += `<div style="font-size:13px; color:var(--si);">Nessuna criticità rilevata.</div>`;
+    }
+
     document.getElementById('detail-content').innerHTML = html;
     document.getElementById('detail-overlay').style.display = 'block';
-    
+
     document.getElementById('del-btn').onclick = () => {
-        if(confirm("Eliminare definitivamente questa scheda?")) {
+        if (confirm("Eliminare definitivamente questa scheda?")) {
             db = db.filter(x => x.id !== id);
-            localStorage.setItem('mdr_v7_db', JSON.stringify(db));
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
             closeDetails();
             renderData();
         }
     };
 
     document.getElementById('ws-btn').onclick = () => {
-        const numeroTelefono = "393278263522"; 
-        let m = `*VALUTAZIONE ISOLAMENTO MDR*\nPaziente: ${r.paziente}\nReparto: ${r.uo}\nInizio Isolamento: ${r.dataInizio}\nCompliance: ${r.score}%\n\n*CRITICITÀ:*\n`;
-        if(nos.length > 0) {
+        const numeroTelefono = "393278263522";
+
+        let m = `*VALUTAZIONE ISOLAMENTO MDR*
+Paziente: ${r.paziente}
+Reparto: ${r.uo}
+Ubicazione: ${r.ubicazione || 'N.D.'}
+Tipo isolamento: ${tipoLabel}
+Inizio Isolamento: ${r.dataInizio || 'N.D.'}
+Compliance: ${r.score}%
+
+*CRITICITÀ:*
+`;
+
+        if (nos.length > 0) {
             nos.forEach(n => m += `- ${n.t}\n`);
         } else {
             m += `Nessuna criticità rilevata.`;
         }
+
         window.open(`https://wa.me/${numeroTelefono}?text=${encodeURIComponent(m)}`);
     };
 }
-function closeDetails() { document.getElementById('detail-overlay').style.display = 'none'; }
+
+function closeDetails() {
+    document.getElementById('detail-overlay').style.display = 'none';
+}
+
 init();
 </script>
+
 </body>
 </html>
