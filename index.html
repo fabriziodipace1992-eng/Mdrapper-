@@ -337,6 +337,15 @@ input[type="date"]::-webkit-date-and-time-value {
             <div class="section-title">Dettaglio Item</div>
             <div id="item-analysis"></div>
         </div>
+        <div class="card">
+    <div class="section-title">Top criticità</div>
+    <div id="top-issues"></div>
+</div>
+
+<div class="card">
+    <div class="section-title">Reparti</div>
+    <div id="uo-ranking"></div>
+</div>
     </div>
 </div>
 
@@ -587,6 +596,8 @@ function renderStats() {
             </div>
         `;
     }).join('');
+    renderTopIssues(data);
+    renderUORanking(data);
 }
 
 function nav(p, btn) {
@@ -695,6 +706,75 @@ Compliance: ${r.score}%
 
 function closeDetails() {
     document.getElementById('detail-overlay').style.display = 'none';
+}
+    function getColor(p) {
+    if (p < 60) return 'var(--no)';
+    if (p < 85) return 'var(--warning)';
+    return 'var(--si)';
+}
+
+function getLabel(p) {
+    if (p < 60) return 'CRITICO';
+    if (p < 85) return 'DA MIGLIORARE';
+    return 'ADEGUATO';
+}
+    function renderTopIssues(data) {
+    let results = ITEMS.map(item => {
+        let si = 0, tot = 0;
+
+        data.forEach(r => {
+            if (r.raw[item.id] === 'SI') { si++; tot++; }
+            if (r.raw[item.id] === 'NO') { tot++; }
+        });
+
+        let p = tot > 0 ? Math.round((si / tot) * 100) : 0;
+
+        return { ...item, p };
+    });
+
+    // prendi i peggiori 3
+    let worst = results.sort((a, b) => a.p - b.p).slice(0, 3);
+
+    document.getElementById('top-issues').innerHTML = worst.map(w => `
+        <div style="margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between;">
+                <span>${w.id}. ${w.t}</span>
+                <b style="color:${getColor(w.p)}">${w.p}%</b>
+            </div>
+            <div style="font-size:11px; color:${getColor(w.p)};">
+                ${getLabel(w.p)}
+            </div>
+        </div>
+    `).join('');
+}
+    function renderUORanking(data) {
+    let map = {};
+
+    data.forEach(r => {
+        if (!map[r.uo]) {
+            map[r.uo] = { sum: 0, count: 0 };
+        }
+        map[r.uo].sum += r.score;
+        map[r.uo].count++;
+    });
+
+    let list = Object.entries(map).map(([uo, v]) => {
+        let avg = Math.round(v.sum / v.count);
+        return { uo, avg, n: v.count };
+    });
+
+    // ordina dal migliore al peggiore
+    list.sort((a, b) => b.avg - a.avg);
+
+    document.getElementById('uo-ranking').innerHTML = list.map(r => `
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <span>${r.uo}</span>
+            <span>
+                <b style="color:${getColor(r.avg)}">${r.avg}%</b>
+                <span style="font-size:11px; color:var(--muted)"> (n=${r.n})</span>
+            </span>
+        </div>
+    `).join('');
 }
 
 init();
