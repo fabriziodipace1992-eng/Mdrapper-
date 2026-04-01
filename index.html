@@ -10,7 +10,7 @@
 :root { --bg: #f0f4f8; --white: #ffffff; --border: #d1d9e6; --text: #2d3748; --muted: #718096; --accent: #0057b8; --si: #22c55e; --no: #ef4444; --warning: #f59e0b; --tab-h: 75px; }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: 'IBM Plex Sans', sans-serif;}
 body { background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
-.header { background: var(--accent); color: white; padding: 15px; flex-shrink: 0; text-align: center; }
+.header { background: var(--accent); color: white; padding: 15px; flex-shrink: 0; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 .pages { flex: 1; overflow-y: auto; padding: 12px 12px 120px; }
 .page { display: none; } .page.active { display: block; }
 .card { background: white; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: relative; }
@@ -20,7 +20,7 @@ input, select { width: 100%; height: 48px; padding: 0 12px; border: 2px solid va
 .field-label { font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; display: block; }
 
 .tipo-group, .ans-group { display: flex; gap: 8px; margin-top: 5px; }
-.tipo-btn, .ans-btn { flex: 1; height: 42px; border: 2px solid var(--border); border-radius: 10px; background: white; font-size: 9px; font-weight: 700; color: var(--muted); display: flex; align-items: center; justify-content: center; text-align: center; }
+.tipo-btn, .ans-btn { flex: 1; height: 42px; border: 2px solid var(--border); border-radius: 10px; background: white; font-size: 9px; font-weight: 700; color: var(--muted); display: flex; align-items: center; justify-content: center; text-align: center; transition: all 0.2s; }
 .ans-btn { height: 48px; font-size: 14px; }
 
 .active-si { background: #dcfce7 !important; border-color: var(--si) !important; color: #166534 !important; }
@@ -28,38 +28,36 @@ input, select { width: 100%; height: 48px; padding: 0 12px; border: 2px solid va
 .active-na { background: #f1f5f9 !important; border-color: #94a3b8 !important; color: #334155 !important; }
 
 .compliance-box { background: #1e293b; color: white; border-radius: 14px; padding: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; transition: all 0.4s; }
-.btn-save { background: var(--accent); color: white; width: 100%; padding: 18px; border: none; border-radius: 14px; font-weight: 700; font-size: 16px; margin-top: 8px; }
+.btn-save { background: var(--accent); color: white; width: 100%; padding: 18px; border: none; border-radius: 14px; font-weight: 700; font-size: 16px; margin-top: 8px; box-shadow: 0 4px 6px rgba(0,87,184,0.2); }
+.btn-save:disabled { background: #cbd5e1; box-shadow: none; }
 
 .tabs { display: flex; background: white; border-top: 1px solid var(--border); position: fixed; bottom: 0; width: 100%; height: var(--tab-h); padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
 .tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); font-size: 11px; font-weight: 700; }
 .tab.active { color: var(--accent); background: #f0f7ff; border-top: 4px solid var(--accent); }
 
-/* Overlay Dettagli */
 #detail-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:1000; overflow-y:auto; padding:20px; }
-.badge-no { color: var(--no); font-weight: bold; margin-right: 5px; }
-
-/* Filtro */
+.badge-no { background: #fee2e2; color: #991b1b; padding: 8px; border-radius: 8px; font-size: 13px; margin-bottom: 5px; display: block; border-left: 4px solid var(--no); }
 .filter-bar { margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 12px; }
 </style>
 </head>
 <body>
 
-<div class="header"><h1 style="font-size: 16px;">SCHEDA VALUTAZIONE ISOLAMENTO</h1></div>
+<div class="header"><h1 style="font-size: 16px; letter-spacing: 1px;">SCHEDA VALUTAZIONE ISOLAMENTO</h1></div>
 
 <div class="pages">
     <div class="page active" id="page-form">
         <div class="card">
-            <div class="section-title">Anagrafica</div>
-            <div class="field-label">Paziente</div>
-            <input type="text" id="f-paziente" placeholder="COGNOME NOME" oninput="check()">
+            <div class="section-title">Anagrafica Paziente</div>
+            <div class="field-label">Paziente (Cognome Nome / ID)</div>
+            <input type="text" id="f-paziente" placeholder="Esempio: ROSSI MARIO" oninput="check()">
             <div class="field-label">Unità Operativa</div>
-            <input type="text" id="f-uo" list="uo-list" placeholder="Reparto..." oninput="check()">
+            <input type="text" id="f-uo" list="uo-list" placeholder="Seleziona o scrivi..." oninput="check()">
             <datalist id="uo-list"></datalist>
             <div style="display:flex; gap:10px;">
-                <div style="flex:1"><div class="field-label">Letto</div><input type="text" id="f-ubicazione" oninput="check()"></div>
-                <div style="flex:1"><div class="field-label">Data</div><input type="date" id="f-data-inizio" oninput="check()"></div>
+                <div style="flex:1"><div class="field-label">Stanza / Letto</div><input type="text" id="f-ubicazione" oninput="check()" placeholder="4/2"></div>
+                <div style="flex:1"><div class="field-label">Data Valutazione</div><input type="date" id="f-data-inizio" oninput="check()"></div>
             </div>
-            <div class="field-label">Tipo Isolamento</div>
+            <div class="field-label">Tipologia Isolamento</div>
             <div class="tipo-group">
                 <button class="tipo-btn" id="btn-contatto" onclick="setTipo('contatto')">👋 CONTATTO</button>
                 <button class="tipo-btn" id="btn-droplet" onclick="setTipo('droplet')">💧 DROPLET</button>
@@ -68,40 +66,47 @@ input, select { width: 100%; height: 48px; padding: 0 12px; border: 2px solid va
         </div>
         <div id="survey-content"></div>
         <div id="live-compliance-box" class="compliance-box">
-            <div><span style="font-size: 10px; opacity: 0.8;">COMPLIANCE</span><div id="live-status">-</div></div>
-            <div style="font-size:32px; font-weight:700;" id="live-score">0%</div>
+            <div><span style="font-size: 10px; opacity: 0.8; font-weight: bold;">STATO COMPLIANCE</span><div id="live-status" style="font-size: 13px; font-weight: 600;">-</div></div>
+            <div style="font-size:36px; font-weight:700; font-family:'IBM Plex Mono';" id="live-score">0%</div>
         </div>
-        <button class="btn-save" id="btn-save" disabled onclick="save()">SALVA SCHEDA</button>
+        <button class="btn-save" id="btn-save" disabled onclick="save()">SALVA SCHEDA NELL'ARCHIVIO</button>
     </div>
 
     <div class="page" id="page-data">
         <div class="card">
-            <div class="section-title">Archivio Audit</div>
+            <div class="section-title">Archivio Audit Eseguiti</div>
+            <button onclick="exportToExcel()" style="width:100%; padding:12px; background:#15803d; color:white; border:none; border-radius:10px; font-weight:700; margin-bottom:15px; font-size:12px;">📥 ESPORTA TUTTO IN CSV</button>
             <div id="list-container"></div>
         </div>
     </div>
 
     <div class="page" id="page-stats">
         <div class="filter-bar">
-            <span>Filtra Reparto:</span>
-            <select id="stat-filter-uo" onchange="renderStats()" style="margin-bottom:0; height:35px; flex:1; font-size:12px;"></select>
+            <b style="color:var(--accent)">Filtro:</b>
+            <select id="stat-filter-uo" onchange="renderStats()" style="margin-bottom:0; height:38px; flex:1; font-size:12px; border-color:var(--accent);"></select>
         </div>
-        <div id="stat-main-card" class="card" style="background:#1e293b; color:white;">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; text-align:center;">
-                <div><span id="stat-tot" style="font-size:24px; font-weight:700;">0</span><br><small>AUDIT</small></div>
-                <div><span id="stat-avg" style="font-size:24px; font-weight:700;">0%</span><br><small>MEDIA</small></div>
+        <div id="stat-main-card" class="card" style="background:#1e293b; color:white; transition: 0.5s;">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; text-align:center; padding:10px 0;">
+                <div><span id="stat-tot" style="font-size:28px; font-weight:700;">0</span><br><small style="opacity:0.7">TOT. AUDIT</small></div>
+                <div><span id="stat-avg" style="font-size:28px; font-weight:700;">0%</span><br><small style="opacity:0.7">MEDIA COMPL.</small></div>
             </div>
         </div>
-        <div class="card"><div class="section-title">Analisi per Item</div><div id="item-analysis"></div></div>
+        <div class="card">
+            <div class="section-title">Dettaglio per Singolo Item</div>
+            <div id="item-analysis" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
     </div>
 </div>
 
 <div id="detail-overlay">
-    <button onclick="closeDetails()" style="background:#f1f5f9; border:none; padding:10px 20px; border-radius:8px; font-weight:700; margin-bottom:20px;">← CHIUDI</button>
+    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <button onclick="closeDetails()" style="background:#f1f5f9; border:none; padding:10px 15px; border-radius:8px; font-weight:700; color:var(--text);">← CHIUDI</button>
+        <div id="detail-badge-score" style="padding:10px 15px; border-radius:8px; color:white; font-weight:700; font-size:18px;"></div>
+    </div>
     <div id="detail-content"></div>
-    <div style="display:flex; gap:10px; margin-top:20px;">
-        <button id="ws-btn" style="flex:1; background:#25d366; color:white; border:none; padding:15px; border-radius:12px; font-weight:700;">📲 INVIA SU WHATSAPP</button>
-        <button id="del-btn" style="background:#fee2e2; color:#ef4444; border:none; padding:15px; border-radius:12px;">🗑️</button>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-top:30px;">
+        <button id="ws-btn" style="width:100%; background:#25d366; color:white; border:none; padding:18px; border-radius:14px; font-weight:700; font-size:16px;">📲 INVIA REPORT SU WHATSAPP</button>
+        <button id="del-btn" style="width:100%; background:none; color:var(--no); border:1px solid var(--no); padding:12px; border-radius:14px; font-weight:600; font-size:14px; margin-top:10px;">🗑️ ELIMINA QUESTA SCHEDA</button>
     </div>
 </div>
 
@@ -112,12 +117,31 @@ input, select { width: 100%; height: 48px; padding: 0 12px; border: 2px solid va
 </div>
 
 <script>
+// --- ITEM ORIGINALI INVARIATI ---
 const ITEMS = [
-    {c:1, id:1, t:"Cartello indicatore presente"}, {c:1, id:2, t:"Carrello/ripiano DPI presente"}, {c:1, id:3, t:"Assenza materiale superfluo"},
-    {c:2, id:4, t:"Contenitore rifiuti infetti"}, {c:2, id:5, t:"Sacco biancheria idrosolubile"}, {c:2, id:6, t:"Materiale sanitario dedicato"}, {c:2, id:7, t:"Uso dedicato servizi igienici"},
-    {c:3, id:8, t:"DPI corretti Medico (Ingresso)"}, {c:3, id:9, t:"Igiene mani Medico (Ingresso)"}, {c:3, id:10, t:"DPI corretti Inf (Ingresso)"}, {c:3, id:11, t:"Igiene mani Inf (Ingresso)"}, {c:3, id:12, t:"DPI corretti OSS (Ingresso)"}, {c:3, id:13, t:"Igiene mani OSS (Ingresso)"}, {c:3, id:14, t:"Educazione sanitaria eseguita"},
-    {c:4, id:15, t:"DPI smaltiti Medico (Uscita)"}, {c:4, id:16, t:"Igiene mani Medico (Uscita)"}, {c:4, id:17, t:"DPI smaltiti Inf (Uscita)"}, {c:4, id:18, t:"Igiene mani Inf (Uscita)"}, {c:4, id:19, t:"DPI smaltiti OSS (Uscita)"}, {c:4, id:20, t:"Igiene mani OSS (Uscita)"},
-    {c:5, id:21, t:"Informazione CRE in cartella"}, {c:5, id:22, t:"Scheda pulizie compilata"}, {c:5, id:23, t:"Scheda sanificazione presidi"}
+    {c:1, id:1, t:"Presenza cartello indicatore all'ingresso della stanza (su entrambi i versanti della porta)"},
+    {c:1, id:2, t:"Presenza all'esterno della stanza carrello/ripiano dedicato con DPI"},
+    {c:1, id:3, t:"Assenza di materiale e/o presidi non necessari"},
+    {c:2, id:4, t:"Presenza contenitore per rifiuti sanitari infetti"},
+    {c:2, id:5, t:"Presenza contenitore sacchi speciali per la biancheria idrosolubili"},
+    {c:2, id:6, t:"Presenza materiale sanitario dedicato e/o monouso per il paziente"},
+    {c:2, id:7, t:"Uso dedicato di servizi igienici in relazione al grado di autosufficienza"},
+    {c:3, id:8, t:"DPI previsti adottati correttamente dal personale medico"},
+    {c:3, id:9, t:"Corretta igiene mani del personale medico"},
+    {c:3, id:10, t:"DPI previsti adottati correttamente dal personale infermieristico"},
+    {c:3, id:11, t:"Corretta igiene mani del personale infermieristico"},
+    {c:3, id:12, t:"DPI previsti adottati correttamente dal personale di assistenza"},
+    {c:3, id:13, t:"Corretta igiene mani del personale di assistenza"},
+    {c:3, id:14, t:"Viene eseguita educazione sanitaria (se paziente autosufficiente)"},
+    {c:4, id:15, t:"DPI usati tolti e smaltiti correttamente dal personale medico"},
+    {c:4, id:16, t:"Corretta igiene mani del personale medico"},
+    {c:4, id:17, t:"DPI usati tolti e smaltiti correttamente dal personale infermieristico"},
+    {c:4, id:18, t:"Corretta igiene mani del personale infermieristico"},
+    {c:4, id:19, t:"DPI usati tolti e smaltiti correttamente dal personale di assistenza"},
+    {c:4, id:20, t:"Corretta igiene mani del personale di assistenza"},
+    {c:5, id:21, t:"Informazione positività CRE in documentazione chiara e condivisa"},
+    {c:5, id:22, t:"Scheda sanificazione per ditta pulizie compilata"},
+    {c:5, id:23, t:"Scheda sanificazione presidi compilata"}
 ];
 
 let answers = {};
@@ -126,12 +150,12 @@ let db = JSON.parse(localStorage.getItem('mdr_v7_db')) || [];
 
 function init() {
     let html = '';
-    const cats = ["Esterno", "Interno", "Personale (IN)", "Personale (OUT)", "Doc"];
+    const cats = ["1. ESTERNO STANZA", "2. INTERNO STANZA", "3. PERSONALE (VESTIZIONE)", "4. PERSONALE (SVESTIZIONE)", "5. DOCUMENTAZIONE"];
     [1,2,3,4,5].forEach((c, idx) => {
         html += `<div class="card"><div class="section-title">${cats[idx]}</div>`;
         ITEMS.filter(i => i.c === c).forEach(i => {
-            html += `<div style="padding:10px 0; border-bottom:1px solid #eee;">
-                <span style="font-size:13px; display:block; margin-bottom:8px;">${i.id}. ${i.t}</span>
+            html += `<div style="padding:12px 0; border-bottom:1px solid #f1f5f9;">
+                <span style="font-size:14px; line-height:1.4; display:block; margin-bottom:10px; font-weight:500;">${i.id}. ${i.t}</span>
                 <div class="ans-group">
                     <button class="ans-btn" onclick="setAns(${i.id},'SI',this)">SI</button>
                     <button class="ans-btn" onclick="setAns(${i.id},'NO',this)">NO</button>
@@ -153,7 +177,8 @@ function updateUOList() {
 
 function setTipo(v) {
     tipo = v;
-    document.querySelectorAll('.tipo-btn').forEach(b => b.style.borderColor = '#d1d9e6');
+    document.querySelectorAll('.tipo-btn').forEach(b => b.style.background = 'white');
+    document.getElementById('btn-'+v).style.background = '#e2e8f0';
     document.getElementById('btn-'+v).style.borderColor = 'var(--accent)';
     check();
 }
@@ -171,10 +196,13 @@ function calcScore() {
     Object.values(answers).forEach(v => { if(v==='SI') si++; if(v==='NO') no++; });
     let pct = (si+no) > 0 ? Math.round((si/(si+no))*100) : 0;
     const box = document.getElementById('live-compliance-box');
+    const status = document.getElementById('live-status');
     document.getElementById('live-score').textContent = pct + '%';
-    if(pct < 60 && (si+no)>0) box.style.background = 'var(--no)';
-    else if(pct < 85 && (si+no)>0) box.style.background = 'var(--warning)';
-    else box.style.background = (si+no)>0 ? 'var(--si)' : '#1e293b';
+    
+    if((si+no) === 0) { status.textContent = "IN ATTESA DATI"; box.style.background = '#1e293b'; }
+    else if(pct < 60) { status.textContent = "NON CONFORME (PERICOLO)"; box.style.background = 'var(--no)'; }
+    else if(pct < 85) { status.textContent = "PARZIALMENTE CONFORME"; box.style.background = 'var(--warning)'; }
+    else { status.textContent = "CONFORME"; box.style.background = 'var(--si)'; }
     return pct;
 }
 
@@ -198,38 +226,42 @@ function save() {
     };
     db.push(rec);
     localStorage.setItem('mdr_v7_db', JSON.stringify(db));
-    if(score < 60) alert("⚠️ ALLERTA SOGLIA: Compliance molto bassa ("+score+"%). Verificare procedure!");
+    if(score < 60) alert("⚠️ ATTENZIONE: Compliance critica ("+score+"%). Inviato segnale di allerta.");
     location.reload();
 }
 
 function renderData() {
     const c = document.getElementById('list-container');
     c.innerHTML = db.length ? db.map(r => `
-        <div class="card" onclick="openDetails(${r.id})" style="padding:12px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
-            <div><b>${r.paziente}</b><br><small>${r.uo} | ${r.dataVal}</small></div>
-            <b style="color:${r.score < 60 ? 'var(--no)' : (r.score < 85 ? 'var(--warning)' : 'var(--si)')}">${r.score}%</b>
-        </div>`).reverse().join('') : "Archivio vuoto.";
+        <div class="card" onclick="openDetails(${r.id})" style="padding:15px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border-left: 5px solid ${r.score < 60 ? 'var(--no)' : (r.score < 85 ? 'var(--warning)' : 'var(--si)')}">
+            <div><b style="font-size:15px;">${r.paziente}</b><br><small style="color:var(--muted)">${r.uo} • ${r.dataVal}</small></div>
+            <div style="font-weight:700; font-size:18px; color:${r.score < 60 ? 'var(--no)' : (r.score < 85 ? 'var(--warning)' : 'var(--si)')}">${r.score}%</div>
+        </div>`).reverse().join('') : "<div style='text-align:center; padding:30px; color:var(--muted)'>Nessuna scheda salvata.</div>";
 }
 
 function openDetails(id) {
     const r = db.find(x => x.id === id);
     const nos = ITEMS.filter(i => r.raw[i.id] === 'NO');
-    let html = `<h2>${r.paziente}</h2><p>${r.uo} - ${r.dataVal}</p><hr style="margin:15px 0;">
-                <p>Compliance: <b>${r.score}%</b></p>
-                <p>Tipo: ${r.tipo.toUpperCase()}</p><br>
-                <h3>Criticità Rilevate:</h3>`;
+    const badge = document.getElementById('detail-badge-score');
+    badge.textContent = r.score + '%';
+    badge.style.background = r.score < 60 ? 'var(--no)' : (r.score < 85 ? 'var(--warning)' : 'var(--si)');
+
+    let html = `<h2 style="margin-bottom:5px;">${r.paziente}</h2>
+                <p style="color:var(--muted); margin-bottom:20px;">Reparto: <b>${r.uo}</b><br>Data Audit: ${r.dataVal}<br>Tipo Isolamento: ${r.tipo.toUpperCase()}</p>
+                <h3 style="font-size:14px; margin-bottom:10px; color:var(--no)">NON CONFORMITÀ RILEVATE (${nos.length}):</h3>`;
     
-    if(nos.length === 0) html += "<p style='color:green'>✓ Nessuna non conformità</p>";
-    else nos.forEach(n => { html += `<p class="badge-no">✘ ${n.t}</p>`; });
+    if(nos.length === 0) html += "<p style='color:var(--si); font-weight:600;'>✓ Eccellente! Tutte le procedure sono state rispettate.</p>";
+    else nos.forEach(n => { html += `<div class="badge-no"><b>Item ${n.id}:</b> ${n.t}</div>`; });
 
     document.getElementById('detail-content').innerHTML = html;
     document.getElementById('detail-overlay').style.display = 'block';
     
-    document.getElementById('del-btn').onclick = () => { if(confirm("Eliminare?")) { db = db.filter(x=>x.id!==id); localStorage.setItem('mdr_v7_db', JSON.stringify(db)); closeDetails(); renderData(); } };
+    document.getElementById('del-btn').onclick = () => { if(confirm("Confermi l'eliminazione definitiva di questa scheda?")) { db = db.filter(x=>x.id!==id); localStorage.setItem('mdr_v7_db', JSON.stringify(db)); closeDetails(); renderData(); } };
     
     document.getElementById('ws-btn').onclick = () => {
-        let msg = `*REPORT ISOLAMENTO*\nPaziente: ${r.paziente}\nReparto: ${r.uo}\nCompliance: ${r.score}%\n\n*NON CONFORMITÀ:*\n`;
-        nos.forEach(n => msg += `- ${n.t}\n`);
+        let msg = `*SCHEDA VALUTAZIONE ISOLAMENTO*\nPaziente: ${r.paziente}\nReparto: ${r.uo}\nCompliance: *${r.score}%*\n\n*NON CONFORMITÀ RILEVATE:*\n`;
+        if(nos.length === 0) msg += "_Nessuna_";
+        else nos.forEach(n => msg += `• ${n.t}\n`);
         window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
     };
 }
@@ -243,7 +275,8 @@ function renderStats() {
     if(!filtered.length) {
         document.getElementById('stat-tot').textContent = "0";
         document.getElementById('stat-avg').textContent = "0%";
-        document.getElementById('item-analysis').innerHTML = "Nessun dato per questo filtro.";
+        document.getElementById('stat-main-card').style.background = '#1e293b';
+        document.getElementById('item-analysis').innerHTML = "<p style='text-align:center; padding:20px;'>Nessun dato disponibile.</p>";
         return;
     }
 
@@ -257,9 +290,9 @@ function renderStats() {
         let si = 0, tot = 0;
         filtered.forEach(r => { if(r.raw[item.id]==='SI') {si++; tot++;} if(r.raw[item.id]==='NO') tot++; });
         let p = tot > 0 ? Math.round((si/tot)*100) : 0;
-        itemHtml += `<div style="font-size:11px; margin-bottom:8px;">
-            <div style="display:flex; justify-content:space-between;"><span>${item.t}</span><b>${p}%</b></div>
-            <div style="height:4px; background:#eee; border-radius:2px;"><div style="width:${p}%; height:100%; background:${p<60?'var(--no)':'var(--si)'};"></div></div>
+        itemHtml += `<div style="font-size:11px; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span style="max-width:85%">${item.id}. ${item.t}</span><b>${p}%</b></div>
+            <div style="height:6px; background:#f1f5f9; border-radius:3px; overflow:hidden;"><div style="width:${p}%; height:100%; background:${p<60?'var(--no)':'var(--si)'};"></div></div>
         </div>`;
     });
     document.getElementById('item-analysis').innerHTML = itemHtml;
@@ -271,6 +304,17 @@ function nav(p, btn) {
     btn.classList.add('active');
     if(p==='data') renderData();
     if(p==='stats') { updateUOList(); renderStats(); }
+}
+
+function exportToExcel() {
+    if(!db.length) return alert("Vuoto.");
+    let csv = "\uFEFFPaziente;UO;Stanza;Inizio;Tipo;Data Valutazione;Compliance\n";
+    db.forEach(r => { csv += `${r.paziente};${r.uo};${r.ubicazione};${r.inizio};${r.tipo.toUpperCase()};${r.dataVal};${r.score}\n`; });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `Audit_MDR_${new Date().toLocaleDateString()}.csv`;
+    link.click();
 }
 
 init();
