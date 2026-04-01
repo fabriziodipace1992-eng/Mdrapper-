@@ -314,43 +314,43 @@ input[type="date"]::-webkit-date-and-time-value {
     </div>
 
     <div class="page" id="page-stats">
-        <div class="stats-header">
-            <div class="circle-box">
-                <svg>
-                    <circle cx="40" cy="40" r="36" stroke="#334155"></circle>
-                    <circle id="stat-circle" cx="40" cy="40" r="36"></circle>
-                </svg>
-                <div class="circle-text" id="stat-avg">0%</div>
-            </div>
-            <div style="text-align:center">
-                <div id="stat-tot" style="font-size:30px; font-weight:800">0</div>
-                <div style="font-size:10px; opacity:0.6">SCHEDE TOTALI</div>
-            </div>
+    <div class="card">
+        <div class="section-title">Filtro Reparto</div>
+        <select id="stat-filter-uo" onchange="renderStats()"></select>
+    </div>
+
+    <div class="stats-header">
+        <div class="circle-box">
+            <svg>
+                <circle cx="40" cy="40" r="36" stroke="#334155"></circle>
+                <circle id="stat-circle" cx="40" cy="40" r="36"></circle>
+            </svg>
+            <div class="circle-text" id="stat-avg">0%</div>
         </div>
-
-        <div class="card">
-            <div class="section-title">Filtro Reparto</div>
-            <select id="stat-filter-uo" onchange="renderStats()"></select>
+        <div style="text-align:center">
+            <div id="stat-tot" style="font-size:30px; font-weight:800">0</div>
+            <div style="font-size:10px; opacity:0.6">SCHEDE TOTALI</div>
         </div>
+    </div>
 
-        <div class="card">
-    <div class="section-title">Trend nel tempo</div>
-    <div id="trend-box"></div>
-</div>
+    <div class="card">
+        <div class="section-title">Trend nel tempo</div>
+        <div id="trend-box"></div>
+    </div>
 
-        <div class="card">
-            <div class="section-title">Dettaglio Item</div>
-            <div id="item-analysis"></div>
-        </div>
-        <div class="card">
-    <div class="section-title">Top criticità</div>
-    <div id="top-issues"></div>
-</div>
+    <div class="card">
+        <div class="section-title">Top criticità</div>
+        <div id="top-issues"></div>
+    </div>
 
-<div class="card">
-    <div class="section-title">Reparti</div>
-    <div id="uo-ranking"></div>
-</div>
+    <div class="card">
+        <div class="section-title">Reparti</div>
+        <div id="uo-ranking"></div>
+    </div>
+
+    <div class="card">
+        <div class="section-title">Dettaglio Item</div>
+        <div id="item-analysis"></div>
     </div>
 </div>
 
