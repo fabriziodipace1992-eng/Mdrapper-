@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>MDR Analytics Pro</title>
+<title>MDR Controllo Isolamento</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"/>
 <style>
 :root { --bg: #f0f4f8; --white: #ffffff; --border: #d1d9e6; --text: #2d3748; --muted: #718096; --accent: #0057b8; --si: #22c55e; --no: #ef4444; --tab-h: 75px; }
@@ -44,8 +44,8 @@ input:focus { border-color: var(--accent); background: #f8fafc; }
 <body>
 
 <div class="header">
-    <h1 style="font-size: 18px; letter-spacing: 1px;">MDR AUDIT SYSTEM</h1>
-    <p style="font-size: 11px; opacity: 0.8; font-weight: 600;">Controllo Infezioni & Compliance</p>
+    <h1 style="font-size: 18px; letter-spacing: 1px;">SISTEMA GESTIONE MDR</h1>
+    <p style="font-size: 11px; opacity: 0.8; font-weight: 600;">Monitoraggio Isolamenti Protocollati</p>
 </div>
 
 <div class="pages">
@@ -53,23 +53,23 @@ input:focus { border-color: var(--accent); background: #f8fafc; }
     <div class="page active" id="page-form">
         <div class="card" style="display:flex; align-items:center; justify-content: space-around; background: linear-gradient(135deg, #0057b8 0%, #003d82 100%); color: white; border: none;">
             <div style="text-align:center;">
-                <span style="font-size: 10px; text-transform: uppercase; opacity: 0.8;">Score Attuale</span>
+                <span style="font-size: 10px; text-transform: uppercase; opacity: 0.8;">Compliance</span>
                 <div style="font-family:'IBM Plex Mono'; font-size:48px; font-weight:700;" id="live-score">0%</div>
             </div>
             <div style="width: 2px; height: 50px; background: rgba(255,255,255,0.2);"></div>
             <div style="text-align:center;">
-                <span style="font-size: 10px; text-transform: uppercase; opacity: 0.8;">Status</span>
+                <span style="font-size: 10px; text-transform: uppercase; opacity: 0.8;">Esito</span>
                 <div id="live-status" style="font-weight: 700; font-size: 14px; margin-top: 5px;">-</div>
             </div>
         </div>
 
         <div class="card">
-            <div class="section-title">Anagrafica Paziente</div>
+            <div class="section-title">Dati Identificativi</div>
             <div class="field-label">Paziente (Cognome o ID)</div>
             <input type="text" id="f-paziente" placeholder="es. ROSSI MARIO">
             
             <div class="field-label">Unità Operativa</div>
-            <input type="text" id="f-uo" list="uo-list" placeholder="Scrivi reparto...">
+            <input type="text" id="f-uo" list="uo-list" placeholder="Seleziona o scrivi...">
             <datalist id="uo-list"></datalist>
             
             <div class="field-label">Ubicazione (Stanza/Letto)</div>
@@ -87,36 +87,36 @@ input:focus { border-color: var(--accent); background: #f8fafc; }
         </div>
 
         <div id="survey-content"></div>
-        <button class="btn-save" id="btn-save" disabled onclick="save()">REGISTRA AUDIT</button>
+        <button class="btn-save" id="btn-save" disabled onclick="save()">SALVA SCHEDA</button>
     </div>
 
     <div class="page" id="page-data">
         <div class="card">
-            <div class="section-title">Database Valutazioni</div>
-            <button class="btn-excel" onclick="exportToExcel()">📥 SCARICA EXCEL (CSV)</button>
+            <div class="section-title">Archivio Valutazioni</div>
+            <button class="btn-excel" onclick="exportToExcel()">📥 ESPORTA REPORT EXCEL (CSV)</button>
             <div id="list-container"></div>
         </div>
     </div>
 
     <div class="page" id="page-stats">
         <div class="card">
-            <div class="section-title">Overview Performance</div>
+            <div class="section-title">Riepilogo Prestazioni</div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
-                <div class="stat-pill"><span class="stat-val" id="stat-tot">0</span><span class="stat-label">Audit Totali</span></div>
-                <div class="stat-pill"><span class="stat-val" id="stat-avg">0%</span><span class="stat-label">Media Global</span></div>
+                <div class="stat-pill"><span class="stat-val" id="stat-tot">0</span><span class="stat-label">Schede Totali</span></div>
+                <div class="stat-pill"><span class="stat-val" id="stat-avg">0%</span><span class="stat-label">Media Compliance</span></div>
             </div>
             
-            <div class="field-label">Trend per Reparto</div>
+            <div class="field-label">Media per Reparto</div>
             <div id="stat-reparti" style="margin-bottom:20px;"></div>
 
-            <div class="field-label">Focus Criticità (Top Errori)</div>
+            <div class="field-label">Punti Critici da Migliorare</div>
             <div id="stat-errors"></div>
         </div>
     </div>
 </div>
 
 <div class="tabs">
-    <div class="tab active" onclick="nav('form', this)">📝<br>Audit</div>
+    <div class="tab active" onclick="nav('form', this)">📝<br>Nuova</div>
     <div class="tab" onclick="nav('data', this)">📚<br>Archivio</div>
     <div class="tab" onclick="nav('stats', this)">📊<br>Analisi</div>
 </div>
@@ -197,7 +197,7 @@ function calcScore() {
     let pct = (si+no) > 0 ? Math.round((si/(si+no))*100) : 0;
     document.getElementById('live-score').textContent = pct + '%';
     
-    let st = "SCARSO"; if(pct > 60) st = "MEDIO"; if(pct > 85) st = "ECCELLENTE";
+    let st = "NON CONFORME"; if(pct > 60) st = "PARZIALE"; if(pct > 85) st = "CONFORME";
     document.getElementById('live-status').textContent = (si+no) > 0 ? st : "-";
     return pct;
 }
@@ -224,7 +224,7 @@ function save() {
     };
     db.push(rec);
     localStorage.setItem('mdr_final_v5', JSON.stringify(db));
-    alert("Audit salvato con successo!");
+    alert("Scheda salvata!");
     location.reload();
 }
 
@@ -237,7 +237,7 @@ function exportToExcel() {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `Report_Audit_${new Date().toLocaleDateString()}.csv`;
+    link.download = `Report_Isolamenti_${new Date().toLocaleDateString()}.csv`;
     link.click();
 }
 
@@ -250,7 +250,7 @@ function nav(p, btn) {
 }
 
 function deleteRec(id) {
-    if(confirm("Eliminare definitivamente?")) {
+    if(confirm("Eliminare definitivamente la scheda?")) {
         db = db.filter(r => r.id !== id);
         localStorage.setItem('mdr_final_v5', JSON.stringify(db));
         renderData();
@@ -264,13 +264,13 @@ function renderData() {
             <div style="flex:1">
                 <span style="font-size:12px; color:var(--accent); font-weight:700;">${r.uo}</span><br>
                 <b style="font-size:15px;">${r.paziente}</b> <small>(${r.ubicazione})</small><br>
-                <span style="font-size:11px; color:var(--muted)">Audit del: ${r.dataVal}</span>
+                <span style="font-size:11px; color:var(--muted)">Data: ${r.dataVal}</span>
             </div>
             <div style="text-align:right">
                 <div style="font-weight:700; color:${r.score > 80 ? 'var(--si)' : 'var(--no)'}; font-size:18px">${r.score}%</div>
                 <button onclick="deleteRec(${r.id})" style="background:none; border:none; color:var(--no); font-size:10px; font-weight:700;">ELIMINA</button>
             </div>
-        </div>`).reverse().join('') : "<p style='text-align:center; padding:20px; color:var(--muted);'>Archivio vuoto</p>";
+        </div>`).reverse().join('') : "<p style='text-align:center; padding:20px; color:var(--muted);'>Nessuna valutazione registrata</p>";
 }
 
 function renderStats() {
@@ -298,9 +298,9 @@ function renderStats() {
     document.getElementById('stat-errors').innerHTML = top.length ? top.map(e => {
         let itm = ITEMS.find(i => i.id == e[0]);
         return `<div style="background:#fff1f2; padding:12px; border-radius:10px; border-left:4px solid var(--no); margin-top:8px; font-size:13px; font-weight:500;">
-            ${itm.t} <span style="display:block; font-size:10px; color:var(--no); font-weight:700; margin-top:4px;">NON CONFORME IN ${e[1]} AUDIT</span>
+            ${itm.t} <span style="display:block; font-size:10px; color:var(--no); font-weight:700; margin-top:4px;">RILEVATO IN ${e[1]} CASI</span>
         </div>`;
-    }).join('') : "<p style='font-size:13px; color:var(--si);'>Nessun errore ricorrente trovato!</p>";
+    }).join('') : "<p style='font-size:13px; color:var(--si);'>Nessuna criticità ricorrente.</p>";
 }
 
 init();
