@@ -7,7 +7,7 @@
 <title>Scheda Valutazione Isolamento</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"/>
 <style>
-:root { --bg: #f0f4f8; --white: #ffffff; --border: #d1d9e6; --text: #2d3748; --muted: #718096; --accent: #0057b8; --si: #22c55e; --no: #ef4444; --tab-h: 75px; }
+:root { --bg: #f0f4f8; --white: #ffffff; --border: #d1d9e6; --text: #2d3748; --muted: #718096; --accent: #0057b8; --si: #22c55e; --no: #ef4444; --warning: #f59e0b; --tab-h: 75px; }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: 'IBM Plex Sans', sans-serif;}
 body { background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
 .header { background: var(--accent); color: white; padding: 15px; flex-shrink: 0; text-align: center; }
@@ -16,13 +16,11 @@ body { background: var(--bg); color: var(--text); height: 100dvh; display: flex;
 .card { background: white; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 .section-title { background: #e2e8f0; margin: -15px -15px 12px -15px; padding: 10px 15px; font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; border-radius: 16px 16px 0 0; }
 
-/* INPUT */
 input { width: 100%; height: 48px; padding: 0 12px; border: 2px solid var(--border); border-radius: 10px; font-size: 15px; margin-bottom: 10px; outline: none; background: white; -webkit-appearance: none; }
 .field-grid { display: flex; gap: 10px; margin-bottom: 10px; width: 100%; }
 .field-grid > div { flex: 1; width: 50%; }
 .field-label { font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; display: block; }
 
-/* TIPO E ANS BUTTONS */
 .tipo-group, .ans-group { display: flex; gap: 8px; margin-top: 5px; }
 .tipo-btn, .ans-btn { flex: 1; height: 42px; border: 2px solid var(--border); border-radius: 10px; background: white; font-size: 9px; font-weight: 700; color: var(--muted); display: flex; align-items: center; justify-content: center; }
 .ans-btn { height: 48px; font-size: 14px; }
@@ -37,20 +35,21 @@ input { width: 100%; height: 48px; padding: 0 12px; border: 2px solid var(--bord
 .item-row { padding: 12px 0; border-top: 1px solid #edf2f7; }
 .item-text { font-size: 14px; line-height: 1.3; margin-bottom: 12px; display: block; font-weight: 500; }
 
-/* COMPLIANCE & SAVE */
-.compliance-box { background: linear-gradient(135deg, #0057b8 0%, #003d82 100%); color: white; border-radius: 14px; padding: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
+.compliance-box { background: #1e293b; color: white; border-radius: 14px; padding: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; transition: background 0.5s ease; }
 .btn-save { background: var(--accent); color: white; width: 100%; padding: 18px; border: none; border-radius: 14px; font-weight: 700; font-size: 16px; margin-top: 8px; }
 
-/* TABS */
 .tabs { display: flex; background: white; border-top: 1px solid var(--border); position: fixed; bottom: 0; width: 100%; height: var(--tab-h); padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
 .tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); font-size: 11px; font-weight: 700; }
 .tab.active { color: var(--accent); background: #f0f7ff; border-top: 4px solid var(--accent); }
+
+/* Stili per Analytic Card */
+.stat-card-main { transition: all 0.5s ease; }
 </style>
 </head>
 <body>
 
 <div class="header">
-    <h1 style="font-size: 16px;">SISTEMA GESTIONE MDR</h1>
+    <h1 style="font-size: 16px; text-transform: uppercase;">Scheda Valutazione Isolamento</h1>
 </div>
 
 <div class="pages">
@@ -83,7 +82,7 @@ input { width: 100%; height: 48px; padding: 0 12px; border: 2px solid var(--bord
 
         <div id="survey-content"></div>
 
-        <div class="compliance-box">
+        <div id="live-compliance-box" class="compliance-box">
             <div>
                 <span style="font-size: 10px; text-transform: uppercase; opacity: 0.8;">Compliance Attuale</span>
                 <div id="live-status" style="font-weight: 700; font-size: 14px;">-</div>
@@ -102,16 +101,16 @@ input { width: 100%; height: 48px; padding: 0 12px; border: 2px solid var(--bord
     </div>
 
     <div class="page" id="page-stats">
-        <div class="card" style="background: #1e293b; color: white;">
-            <div class="section-title" style="background: #334155; color: #38bdf8;">Overview Performance</div>
+        <div id="stat-main-card" class="card stat-card-main" style="background: #1e293b; color: white;">
+            <div class="section-title" style="background: rgba(255,255,255,0.1); color: white;">Overview Rischio Globale</div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
-                <div style="background:#0f172a; padding:15px; border-radius:12px; border:1px solid #334155; text-align:center;">
+                <div style="background:rgba(0,0,0,0.2); padding:15px; border-radius:12px; text-align:center;">
                     <span id="stat-tot" style="font-size:24px; font-weight:700; color:#38bdf8">0</span><br>
                     <small style="font-size:10px; color:#94a3b8; text-transform:uppercase;">Audit Totali</small>
                 </div>
-                <div style="background:#0f172a; padding:15px; border-radius:12px; border:1px solid #334155; text-align:center;">
-                    <span id="stat-avg" style="font-size:24px; font-weight:700; color:#22c55e">0%</span><br>
-                    <small style="font-size:10px; color:#94a3b8; text-transform:uppercase;">Global Compliance</small>
+                <div style="background:rgba(0,0,0,0.2); padding:15px; border-radius:12px; text-align:center;">
+                    <span id="stat-avg" style="font-size:24px; font-weight:700; color:#ffffff">0%</span><br>
+                    <small style="font-size:10px; color:#94a3b8; text-transform:uppercase;">Compliance</small>
                 </div>
             </div>
         </div>
@@ -213,9 +212,28 @@ function calcScore() {
     let si = 0, no = 0;
     Object.values(answers).forEach(v => { if(v==='SI') si++; if(v==='NO') no++; });
     let pct = (si+no) > 0 ? Math.round((si/(si+no))*100) : 0;
-    document.getElementById('live-score').textContent = pct + '%';
-    let st = "NON CONFORME"; if(pct > 60) st = "PARZIALE"; if(pct > 85) st = "CONFORME";
-    document.getElementById('live-status').textContent = (si+no) > 0 ? st : "-";
+    
+    // UI Feedback
+    const scoreEl = document.getElementById('live-score');
+    const statusEl = document.getElementById('live-status');
+    const boxEl = document.getElementById('live-compliance-box');
+    
+    scoreEl.textContent = pct + '%';
+    
+    if((si+no) === 0) {
+        statusEl.textContent = "-";
+        boxEl.style.background = "#1e293b";
+    } else if(pct <= 50) {
+        statusEl.textContent = "PERICOLO ELEVATO";
+        boxEl.style.background = "linear-gradient(135deg, #ef4444 0%, #991b1b 100%)";
+    } else if(pct <= 80) {
+        statusEl.textContent = "ATTENZIONE - RISCHIO MEDIO";
+        boxEl.style.background = "linear-gradient(135deg, #f59e0b 0%, #b45309 100%)";
+    } else {
+        statusEl.textContent = "CONFORME";
+        boxEl.style.background = "linear-gradient(135deg, #22c55e 0%, #15803d 100%)";
+    }
+    
     return pct;
 }
 
@@ -262,7 +280,7 @@ function renderData() {
                 <small>${r.uo} | ${r.dataVal}</small>
             </div>
             <div style="text-align:right">
-                <div style="font-weight:700; color:${r.score > 80 ? 'var(--si)' : 'var(--no)'}; font-size:16px">${r.score}%</div>
+                <div style="font-weight:700; color:${r.score > 80 ? 'var(--si)' : (r.score > 50 ? 'var(--warning)' : 'var(--no)')}; font-size:16px">${r.score}%</div>
             </div>
         </div>`).reverse().join('') : "Nessuna scheda presente";
 }
@@ -271,9 +289,15 @@ function renderStats() {
     if(!db.length) return;
     document.getElementById('stat-tot').textContent = db.length;
     let globalAvg = Math.round(db.reduce((s, c) => s + c.score, 0) / db.length);
+    
     const avgEl = document.getElementById('stat-avg');
+    const mainCard = document.getElementById('stat-main-card');
     avgEl.textContent = globalAvg + '%';
-    avgEl.style.color = globalAvg > 80 ? '#22c55e' : (globalAvg > 60 ? '#f59e0b' : '#ef4444');
+    
+    // Cambio colore Dashboard Globale
+    if(globalAvg <= 50) mainCard.style.background = "#ef4444";
+    else if(globalAvg <= 80) mainCard.style.background = "#f59e0b";
+    else mainCard.style.background = "#22c55e";
 
     const reps = {};
     db.forEach(r => { 
@@ -287,7 +311,7 @@ function renderStats() {
     let repsHtml = '';
     Object.keys(reps).forEach(uo => {
         let m = Math.round(reps[uo].scores.reduce((a,b)=>a+b)/reps[uo].scores.length);
-        let color = m > 80 ? '#22c55e' : (m > 60 ? '#f59e0b' : '#ef4444');
+        let color = m > 80 ? '#22c55e' : (m > 50 ? '#f59e0b' : '#ef4444');
         repsHtml += `<div style="background:#f8fafc; padding:12px; border-radius:10px; border:1px solid #e2e8f0; margin-bottom:10px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;"><b style="font-size:13px;">${uo}</b><span style="color:${color}; font-weight:700;">${m}%</span></div>
                 <div style="width:100%; height:6px; background:#e2e8f0; border-radius:3px; overflow:hidden;"><div style="width:${m}%; height:100%; background:${color};"></div></div></div>`;
@@ -311,7 +335,7 @@ function renderStats() {
         const topUoErrors = Object.entries(reps[uo].errors).sort((a,b)=>b[1]-a[1]).slice(0,2);
         if(topUoErrors.length > 0) {
             errorHtml += `<div style="margin-bottom:15px;"><div style="font-weight:700; font-size:12px; color:var(--accent); border-bottom:1px solid #eee; margin-bottom:5px;">${uo}</div>`;
-            topUoErrors.forEach(e => { errorHtml += `<div style="font-size:11px; color:#444; margin-bottom:3px;">🚩 <i>Item ${e[0]}:</i> ${ITEMS.find(i=>i.id==e[0]).t.substring(0,60)}... <b>(${e[1]} fallimenti)</b></div>`; });
+            topUoErrors.forEach(e => { errorHtml += `<div style="font-size:11px; color:#444; margin-bottom:3px;">🚩 <i>Item ${e[0]}:</i> ${ITEMS.find(i=>i.id==e[0]).t.substring(0,60)}... <b>(${e[1]} errori)</b></div>`; });
             errorHtml += `</div>`;
         }
     });
