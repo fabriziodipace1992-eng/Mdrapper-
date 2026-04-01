@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>Audit Isolamento v7.4</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"/>
+<title>Audit Isolamento v7.5</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"/>
 <style>
-:root { --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; --text: #1e293b; --muted: #64748b; --accent: #0f172a; --si: #10b981; --no: #f43f5e; --warning: #f59e0b; --tab-h: 75px; }
+:root { --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; --text: #1e293b; --muted: #64748b; --accent: #0f172a; --si: #10b981; --no: #f43f5e; --warning: #f59e0b; --tab-h: 85px; }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: 'IBM Plex Sans', sans-serif;}
 body { background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
 .header { background: var(--accent); color: white; padding: 18px; text-align: center; font-weight: 800; font-size: 14px; letter-spacing: 1px; flex-shrink: 0; }
-.pages { flex: 1; overflow-y: auto; padding: 15px 15px 100px; }
+.pages { flex: 1; overflow-y: auto; padding: 15px 15px 110px; }
 .page { display: none; } .page.active { display: block; }
 
 .card { background: white; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 15px; padding: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
@@ -19,7 +19,7 @@ body { background: var(--bg); color: var(--text); height: 100dvh; display: flex;
 input, select { width: 100%; height: 50px; padding: 0 15px; border: 2px solid var(--border); border-radius: 12px; font-size: 15px; margin-bottom: 10px; outline: none; background: white; }
 
 .ans-group { display: flex; gap: 8px; margin-top: 8px; }
-.ans-btn { flex: 1; height: 45px; border: 2px solid var(--border); border-radius: 10px; background: white; font-size: 13px; font-weight: 700; color: var(--muted); }
+.ans-btn { flex: 1; height: 48px; border: 2px solid var(--border); border-radius: 10px; background: white; font-size: 14px; font-weight: 700; color: var(--muted); }
 .active-si { background: var(--si) !important; color: white !important; border-color: var(--si) !important; }
 .active-no { background: var(--no) !important; color: white !important; border-color: var(--no) !important; }
 .active-na { background: var(--muted) !important; color: white !important; border-color: var(--muted) !important; }
@@ -27,16 +27,51 @@ input, select { width: 100%; height: 50px; padding: 0 15px; border: 2px solid va
 #live-compliance-box { background: #1e293b; color: white; border-radius: 18px; padding: 20px; text-align: center; transition: background 0.5s ease; }
 #live-score { font-size: 42px; font-weight: 800; font-family: 'IBM Plex Mono'; }
 
+/* MENU INFERIORE AGGIORNATO */
+.tabs { 
+    display: flex; 
+    background: white; 
+    border-top: 1px solid var(--border); 
+    position: fixed; 
+    bottom: 0; 
+    width: 100%; 
+    height: var(--tab-h); 
+    padding-bottom: env(safe-area-inset-bottom); 
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+}
+.tab { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    color: var(--muted); 
+    transition: all 0.2s ease;
+    gap: 4px;
+}
+.tab-icon {
+    font-size: 28px; /* Icone molto più grandi */
+    line-height: 1;
+}
+.tab-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.tab.active { 
+    color: var(--accent); 
+    background: #f1f5f9;
+    border-top: 4px solid var(--accent); 
+}
+.tab.active .tab-icon { transform: scale(1.1); }
+
+/* Overlay & Stats */
 .stats-header { background: #1e293b; color: white; border-radius: 18px; padding: 20px; display: flex; align-items: center; justify-content: space-around; margin-bottom: 15px; }
 .circle-box { position: relative; width: 80px; height: 80px; }
 .circle-box svg { transform: rotate(-90deg); width: 80px; height: 80px; }
-.circle-box circle { fill: none; stroke-width: 6; stroke-dasharray: 226; stroke-dashoffset: 226; transition: stroke-dashoffset 1s ease, stroke 1s; stroke-linecap: round; }
+.circle-box circle { fill: none; stroke-width: 6; stroke-dasharray: 226; stroke-dashoffset: 226; transition: stroke-dashoffset 1s ease; stroke-linecap: round; }
 .circle-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 800; font-size: 18px; }
-
-.tabs { display: flex; background: white; border-top: 1px solid var(--border); position: fixed; bottom: 0; width: 100%; height: var(--tab-h); padding-bottom: env(safe-area-inset-bottom); }
-.tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); font-size: 10px; font-weight: 700; }
-.tab.active { color: var(--accent); border-top: 4px solid var(--accent); }
-
 #detail-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:1000; overflow-y:auto; padding:20px; }
 </style>
 </head>
@@ -49,10 +84,8 @@ input, select { width: 100%; height: 50px; padding: 0 15px; border: 2px solid va
         <div class="card">
             <div class="section-title">Anagrafica</div>
             <input type="text" id="f-paziente" placeholder="Cognome Nome o ID" oninput="check()">
-            
             <input type="text" id="f-uo" list="suggestions-uo" placeholder="Scrivi Reparto..." oninput="check()">
             <datalist id="suggestions-uo"></datalist>
-
             <div style="display:flex; gap:10px;">
                 <input type="text" id="f-ubicazione" placeholder="Stanza/Letto" oninput="check()">
                 <input type="date" id="f-data" oninput="check()">
@@ -68,10 +101,11 @@ input, select { width: 100%; height: 50px; padding: 0 15px; border: 2px solid va
             <div id="live-score">0%</div>
             <div style="font-size: 10px; opacity: 0.7; font-weight: 800;">COMPLIANCE</div>
         </div>
-        <button id="btn-save" disabled onclick="save()" style="width:100%; height:60px; background:#000; color:#fff; border:none; border-radius:15px; font-weight:800; margin-bottom:40px;">REGISTRA AUDIT</button>
+        <button id="btn-save" disabled onclick="save()" style="width:100%; height:60px; background:#000; color:#fff; border:none; border-radius:15px; font-weight:800; margin-bottom:40px; font-size:16px;">REGISTRA AUDIT</button>
     </div>
 
     <div class="page" id="page-data"><div class="section-title">Archivio</div><div id="list-container"></div></div>
+    
     <div class="page" id="page-stats">
         <div class="stats-header">
             <div class="circle-box">
@@ -85,12 +119,21 @@ input, select { width: 100%; height: 50px; padding: 0 15px; border: 2px solid va
     </div>
 </div>
 
-<div id="detail-overlay"><button onclick="closeDetails()" style="padding:10px; margin-bottom:20px; border:none; background:#f1f5f9; border-radius:8px; font-weight:700;">← CHIUDI</button><div id="detail-content"></div><button id="ws-btn" style="width:100%; padding:18px; background:#25d366; color:white; border:none; border-radius:15px; font-weight:800; margin-top:20px;">INVIA REPORT WHATSAPP</button></div>
+<div id="detail-overlay"><button onclick="closeDetails()" style="padding:12px 20px; margin-bottom:20px; border:none; background:#f1f5f9; border-radius:10px; font-weight:700;">← CHIUDI</button><div id="detail-content"></div><button id="ws-btn" style="width:100%; padding:18px; background:#25d366; color:white; border:none; border-radius:15px; font-weight:800; margin-top:20px;">INVIA REPORT WHATSAPP</button></div>
 
 <div class="tabs">
-    <div class="tab active" onclick="nav('form', this)">📝<br>Nuova</div>
-    <div class="tab" onclick="nav('data', this)">📚<br>Archivio</div>
-    <div class="tab" onclick="nav('stats', this)">📊<br>Analisi</div>
+    <div class="tab active" onclick="nav('form', this)">
+        <span class="tab-icon">📝</span>
+        <span class="tab-label">Nuova</span>
+    </div>
+    <div class="tab" onclick="nav('data', this)">
+        <span class="tab-icon">📚</span>
+        <span class="tab-label">Archivio</span>
+    </div>
+    <div class="tab" onclick="nav('stats', this)">
+        <span class="tab-icon">📊</span>
+        <span class="tab-label">Analisi</span>
+    </div>
 </div>
 
 <script>
@@ -141,10 +184,8 @@ function init() {
     document.getElementById('survey-content').innerHTML = html;
 }
 
-// Funzione fondamentale: Popola la lista dei suggerimenti basandosi sul database
 function updateSuggestions() {
     const list = document.getElementById('suggestions-uo');
-    // Prende tutti i reparti unici dal database, pulendoli
     const uos = [...new Set(db.map(r => r.uo))].sort();
     list.innerHTML = uos.map(u => `<option value="${u}">`).join('');
 }
@@ -184,17 +225,8 @@ function check() {
 }
 
 function save() {
-    // Pulizia del nome reparto: Maiuscolo e senza spazi extra
     const uoPura = document.getElementById('f-uo').value.trim().toUpperCase();
-    
-    db.push({ 
-        id: Date.now(), 
-        paziente: document.getElementById('f-paziente').value.toUpperCase(), 
-        uo: uoPura, 
-        score: calcScore(), 
-        dataVal: new Date().toLocaleDateString('it-IT'), 
-        raw: {...answers} 
-    });
+    db.push({ id: Date.now(), paziente: document.getElementById('f-paziente').value.toUpperCase(), uo: uoPura, score: calcScore(), dataVal: new Date().toLocaleDateString('it-IT'), raw: {...answers} });
     localStorage.setItem('mdr_v7_db', JSON.stringify(db));
     location.reload();
 }
