@@ -334,6 +334,11 @@ input[type="date"]::-webkit-date-and-time-value {
         </div>
 
         <div class="card">
+    <div class="section-title">Trend nel tempo</div>
+    <div id="trend-box"></div>
+</div>
+
+        <div class="card">
             <div class="section-title">Dettaglio Item</div>
             <div id="item-analysis"></div>
         </div>
@@ -552,13 +557,16 @@ function renderStats() {
     const data = filter === 'ALL' ? db : db.filter(r => r.uo === filter);
 
     if (!data.length) {
-        document.getElementById('stat-avg').textContent = '0%';
-        document.getElementById('stat-tot').textContent = '0';
-        document.getElementById('item-analysis').innerHTML = '<div class="muted-empty">Nessun dato disponibile.</div>';
-        document.getElementById('stat-circle').style.strokeDashoffset = 226;
-        document.getElementById('stat-circle').style.stroke = '#334155';
-        return;
-    }
+    document.getElementById('stat-avg').textContent = '0%';
+    document.getElementById('stat-tot').textContent = '0';
+    document.getElementById('item-analysis').innerHTML = '<div class="muted-empty">Nessun dato disponibile.</div>';
+    document.getElementById('top-issues').innerHTML = '<div class="muted-empty">Nessun dato disponibile.</div>';
+    document.getElementById('uo-ranking').innerHTML = '<div class="muted-empty">Nessun dato disponibile.</div>';
+    document.getElementById('trend-box').innerHTML = '<div class="muted-empty">Nessun dato disponibile.</div>';
+    document.getElementById('stat-circle').style.strokeDashoffset = 226;
+    document.getElementById('stat-circle').style.stroke = '#334155';
+    return;
+}
 
     const avg = Math.round(data.reduce((s, c) => s + c.score, 0) / data.length);
     document.getElementById('stat-avg').textContent = avg + "%";
@@ -598,6 +606,7 @@ function renderStats() {
     }).join('');
     renderTopIssues(data);
     renderUORanking(data);
+    renderTrend(data);
 }
 
 function nav(p, btn) {
@@ -775,6 +784,103 @@ function getLabel(p) {
             </span>
         </div>
     `).join('');
+}
+    function parseItalianDate(dateStr) {
+    if (!dateStr) return null;
+
+    const parts = dateStr.split('/');
+    if (parts.length !== 3) return null;
+
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const year = parseInt(parts[2], 10);
+
+    return new Date(year, month, day);
+}
+
+function averageScore(records) {
+    if (!records.length) return 0;
+    return Math.round(records.reduce((sum, r) => sum + r.score, 0) / records.length);
+}
+    function renderTrend(data) {
+    const now = new Date();
+    now.setHours(23, 59, 59, 999);
+
+    const sevenDaysAgo = new Date(now);
+    sevenDaysAgo.setDate(now.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const previousStart = new Date(sevenDaysAgo);
+    previousStart.setDate(sevenDaysAgo.getDate() - 7);
+    previousStart.setHours(0, 0, 0, 0);
+
+    const previousEnd = new Date(sevenDaysAgo);
+    previousEnd.setDate(sevenDaysAgo.getDate() - 1);
+    previousEnd.setHours(23, 59, 59, 999);
+
+    const last7 = data.filter(r => {
+        const d = parseItalianDate(r.dataVal);
+        return d && d >= sevenDaysAgo && d <= now;
+    });
+
+    const prev7 = data.filter(r => {
+        const d = parseItalianDate(r.dataVal);
+        return d && d >= previousStart && d <= previousEnd;
+    });
+
+    const avgLast7 = averageScore(last7);
+    const avgPrev7 = averageScore(prev7);
+    const diff = avgLast7 - avgPrev7;
+
+    let trendLabel = 'STABILE';
+    let trendColor = 'var(--muted)';
+    let trendSymbol = '➖';
+
+    if (diff > 0) {
+        trendLabel = 'IN MIGLIORAMENTO';
+        trendColor = 'var(--si)';
+        trendSymbol = '▲';
+    } else if (diff < 0) {
+        trendLabel = 'IN PEGGIORAMENTO';
+        trendColor = 'var(--no)';
+        trendSymbol = '▼';
+    }
+
+    const diffText = prev7.length ? `${diff > 0 ? '+' : ''}${diff}%` : 'N.D.';
+
+    document.getElementById('trend-box').innerHTML = `
+        <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+            <div>
+                <div style="font-size:11px; color:var(--muted); font-weight:700;">ULTIMI 7 GIORNI</div>
+                <div style="font-size:24px; font-weight:800;">${last7.length ? avgLast7 + '%' : 'N.D.'}</div>
+                <div style="font-size:11px; color:var(--muted);">(n=${last7.length})</div>
+            </div>
+            <div style="text-align:right;">
+                <div style="font-size:11px; color:var(--muted); font-weight:700;">7 GIORNI PRECEDENTI</div>
+                <div style="font-size:24px; font-weight:800;">${prev7.length ? avgPrev7 + '%' : 'N.D.'}</div>
+                <div style="font-size:11px; color:var(--muted);">(n=${prev7.length})</div>
+            </div>
+        </div>
+
+        <div style="
+            margin-top:8px;
+            padding:14px;
+            border-radius:12px;
+            background:#f8fafc;
+            border:1px solid var(--border);
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        ">
+            <div>
+                <div style="font-size:11px; color:var(--muted); font-weight:700;">VARIAZIONE</div>
+                <div style="font-size:22px; font-weight:800; color:${trendColor};">${diffText}</div>
+            </div>
+            <div style="text-align:right; color:${trendColor}; font-weight:800; font-size:13px;">
+                ${trendSymbol} ${trendLabel}
+            </div>
+        </div>
+    `;
 }
 
 init();
