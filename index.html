@@ -22,7 +22,7 @@ input { width: 100%; height: 48px; padding: 0 12px; border: 2px solid var(--bord
 .field-label { font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; display: block; }
 
 .tipo-group, .ans-group { display: flex; gap: 8px; margin-top: 5px; }
-.tipo-btn, .ans-btn { flex: 1; height: 42px; border: 2px solid var(--border); border-radius: 10px; background: white; font-size: 9px; font-weight: 700; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+.tipo-btn, .ans-btn { flex: 1; height: 42px; border: 2px solid var(--border); border-radius: 10px; background: white; font-size: 9px; font-weight: 700; color: var(--muted); display: flex; align-items: center; justify-content: center; text-align: center; }
 .ans-btn { height: 48px; font-size: 14px; }
 
 .active-contatto { background: #dbeafe !important; border-color: #3b82f6 !important; color: #1e40af !important; }
@@ -42,8 +42,8 @@ input { width: 100%; height: 48px; padding: 0 12px; border: 2px solid var(--bord
 .tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); font-size: 11px; font-weight: 700; }
 .tab.active { color: var(--accent); background: #f0f7ff; border-top: 4px solid var(--accent); }
 
-/* Stili per Analytic Card */
-.stat-card-main { transition: all 0.5s ease; }
+/* Stile pulsante elimina */
+.btn-delete { background: none; border: none; color: var(--no); padding: 10px; font-size: 18px; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -58,18 +58,18 @@ input { width: 100%; height: 48px; padding: 0 12px; border: 2px solid var(--bord
         <div class="card">
             <div class="section-title">Anagrafica</div>
             <div class="field-label">Paziente (Cognome o ID)</div>
-            <input type="text" id="f-paziente" placeholder="es. ROSSI MARIO">
+            <input type="text" id="f-paziente" placeholder="es. ROSSI MARIO" oninput="check()">
             <div class="field-label">Unità Operativa</div>
-            <input type="text" id="f-uo" list="uo-list" placeholder="Scrivi reparto...">
+            <input type="text" id="f-uo" list="uo-list" placeholder="Scrivi reparto..." oninput="check()">
             <datalist id="uo-list"></datalist>
             <div class="field-grid">
                 <div>
                     <div class="field-label">Stanza/Letto</div>
-                    <input type="text" id="f-ubicazione" placeholder="es. 4/2">
+                    <input type="text" id="f-ubicazione" placeholder="es. 4/2" oninput="check()">
                 </div>
                 <div>
                     <div class="field-label">Inizio Isolamento</div>
-                    <input type="date" id="f-data-inizio">
+                    <input type="date" id="f-data-inizio" oninput="check()">
                 </div>
             </div>
             <div class="field-label">Tipologia Isolamento</div>
@@ -94,14 +94,14 @@ input { width: 100%; height: 48px; padding: 0 12px; border: 2px solid var(--bord
 
     <div class="page" id="page-data">
         <div class="card">
-            <div class="section-title">Archivio</div>
+            <div class="section-title">Archivio Schede</div>
             <button onclick="exportToExcel()" style="width:100%; padding:12px; background:#15803d; color:white; border:none; border-radius:10px; font-weight:700; margin-bottom:15px;">📥 ESPORTA EXCEL (CSV)</button>
             <div id="list-container"></div>
         </div>
     </div>
 
     <div class="page" id="page-stats">
-        <div id="stat-main-card" class="card stat-card-main" style="background: #1e293b; color: white;">
+        <div id="stat-main-card" class="card" style="background: #1e293b; color: white; transition: all 0.5s ease;">
             <div class="section-title" style="background: rgba(255,255,255,0.1); color: white;">Overview Rischio Globale</div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
                 <div style="background:rgba(0,0,0,0.2); padding:15px; border-radius:12px; text-align:center;">
@@ -212,28 +212,14 @@ function calcScore() {
     let si = 0, no = 0;
     Object.values(answers).forEach(v => { if(v==='SI') si++; if(v==='NO') no++; });
     let pct = (si+no) > 0 ? Math.round((si/(si+no))*100) : 0;
-    
-    // UI Feedback
     const scoreEl = document.getElementById('live-score');
     const statusEl = document.getElementById('live-status');
     const boxEl = document.getElementById('live-compliance-box');
-    
     scoreEl.textContent = pct + '%';
-    
-    if((si+no) === 0) {
-        statusEl.textContent = "-";
-        boxEl.style.background = "#1e293b";
-    } else if(pct <= 50) {
-        statusEl.textContent = "PERICOLO ELEVATO";
-        boxEl.style.background = "linear-gradient(135deg, #ef4444 0%, #991b1b 100%)";
-    } else if(pct <= 80) {
-        statusEl.textContent = "ATTENZIONE - RISCHIO MEDIO";
-        boxEl.style.background = "linear-gradient(135deg, #f59e0b 0%, #b45309 100%)";
-    } else {
-        statusEl.textContent = "CONFORME";
-        boxEl.style.background = "linear-gradient(135deg, #22c55e 0%, #15803d 100%)";
-    }
-    
+    if((si+no) === 0) { statusEl.textContent = "-"; boxEl.style.background = "#1e293b"; }
+    else if(pct <= 50) { statusEl.textContent = "PERICOLO ELEVATO"; boxEl.style.background = "linear-gradient(135deg, #ef4444 0%, #991b1b 100%)"; }
+    else if(pct <= 80) { statusEl.textContent = "ATTENZIONE - RISCHIO MEDIO"; boxEl.style.background = "linear-gradient(135deg, #f59e0b 0%, #b45309 100%)"; }
+    else { statusEl.textContent = "CONFORME"; boxEl.style.background = "linear-gradient(135deg, #22c55e 0%, #15803d 100%)"; }
     return pct;
 }
 
@@ -263,6 +249,14 @@ function save() {
     location.reload();
 }
 
+function deleteRec(id) {
+    if(confirm("Sei sicuro di voler eliminare questa scheda? L'azione non è reversibile.")) {
+        db = db.filter(r => r.id !== id);
+        localStorage.setItem('mdr_v7_db', JSON.stringify(db));
+        renderData(); // Ricarica la lista
+    }
+}
+
 function nav(p, btn) {
     document.querySelectorAll('.page, .tab').forEach(el => el.classList.remove('active'));
     document.getElementById('page-'+p).classList.add('active');
@@ -273,28 +267,42 @@ function nav(p, btn) {
 
 function renderData() {
     const c = document.getElementById('list-container');
-    c.innerHTML = db.length ? db.map(r => `
+    if(!db.length) {
+        c.innerHTML = "<p style='text-align:center; color:var(--muted); padding:20px;'>Nessuna scheda in archivio.</p>";
+        return;
+    }
+    c.innerHTML = db.map(r => `
         <div class="item-row" style="display:flex; justify-content:space-between; align-items:center;">
             <div style="flex:1">
                 <b style="font-size:14px;">${r.paziente}</b> (${r.ubicazione})<br>
                 <small>${r.uo} | ${r.dataVal}</small>
             </div>
-            <div style="text-align:right">
-                <div style="font-weight:700; color:${r.score > 80 ? 'var(--si)' : (r.score > 50 ? 'var(--warning)' : 'var(--no)')}; font-size:16px">${r.score}%</div>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <div style="text-align:right">
+                    <div style="font-weight:700; color:${r.score > 80 ? 'var(--si)' : (r.score > 50 ? 'var(--warning)' : 'var(--no)')}; font-size:16px">${r.score}%</div>
+                </div>
+                <button class="btn-delete" onclick="deleteRec(${r.id})">🗑️</button>
             </div>
-        </div>`).reverse().join('') : "Nessuna scheda presente";
+        </div>`).reverse().join('');
 }
 
 function renderStats() {
-    if(!db.length) return;
+    if(!db.length) {
+        document.getElementById('stat-tot').textContent = "0";
+        document.getElementById('stat-avg').textContent = "0%";
+        document.getElementById('stat-main-card').style.background = "#1e293b";
+        document.getElementById('stat-reparti-grid').innerHTML = "";
+        document.getElementById('item-analysis').innerHTML = "";
+        document.getElementById('stat-reparto-errors').innerHTML = "Nessun dato.";
+        return;
+    }
+    
     document.getElementById('stat-tot').textContent = db.length;
     let globalAvg = Math.round(db.reduce((s, c) => s + c.score, 0) / db.length);
-    
     const avgEl = document.getElementById('stat-avg');
     const mainCard = document.getElementById('stat-main-card');
     avgEl.textContent = globalAvg + '%';
     
-    // Cambio colore Dashboard Globale
     if(globalAvg <= 50) mainCard.style.background = "#ef4444";
     else if(globalAvg <= 80) mainCard.style.background = "#f59e0b";
     else mainCard.style.background = "#22c55e";
@@ -343,13 +351,13 @@ function renderStats() {
 }
 
 function exportToExcel() {
-    if(!db.length) return alert("Vuoto.");
+    if(!db.length) return alert("Archivio vuoto.");
     let csv = "\uFEFFPaziente;UO;Stanza;Inizio;Tipo;Data Valutazione;Compliance\n";
     db.forEach(r => { csv += `${r.paziente};${r.uo};${r.ubicazione};${r.inizio};${r.tipo.toUpperCase()};${r.dataVal};${r.score}\n`; });
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `Report_MDR_${new Date().toLocaleDateString()}.csv`;
+    link.download = `Report_Isolamento_${new Date().toLocaleDateString()}.csv`;
     link.click();
 }
 
