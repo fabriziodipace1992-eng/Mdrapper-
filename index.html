@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>Verifica Isolamento MDR v8.1</title>
+<title>Verifica Isolamento MDR v8.2</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"/>
 <style>
 :root { --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; --text: #1e293b; --muted: #64748b; --accent: #0f172a; --si: #10b981; --no: #f43f5e; --warning: #f59e0b; --tab-h: 85px; }
@@ -15,6 +15,7 @@ body { background: var(--bg); color: var(--text); height: 100dvh; display: flex;
 .card { background: white; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 15px; padding: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); position: relative;}
 .section-title { font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
 input { width: 100%; height: 50px; padding: 0 15px; border: 2px solid var(--border); border-radius: 12px; font-size: 15px; margin-bottom: 10px; outline: none; background: white; }
+.label-sm { font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 4px; display: block; margin-left: 5px;}
 .suggestion-box { display: none; background: white; border: 1px solid var(--border); border-radius: 12px; margin-top: -10px; margin-bottom: 10px; max-height: 150px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); z-index: 10; }
 .suggestion-item { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; font-weight: 600; color: var(--accent); }
 .ans-group { display: flex; gap: 8px; margin-top: 8px; }
@@ -50,7 +51,10 @@ input { width: 100%; height: 50px; padding: 0 15px; border: 2px solid var(--bord
             <div id="suggestion-box" class="suggestion-box"></div>
             <div style="display:flex; gap:10px;">
                 <input type="text" id="f-ubicazione" placeholder="Stanza / Letto" oninput="check()">
-                <input type="date" id="f-data" oninput="check()">
+                <div style="flex:1">
+                    <span class="label-sm">Data Inizio Isolamento</span>
+                    <input type="date" id="f-data" oninput="check()">
+                </div>
             </div>
             <div class="ans-group">
                 <button class="ans-btn" id="btn-contatto" onclick="setTipo('contatto')">👋 CONTATTO</button>
@@ -188,12 +192,25 @@ function calcScore() {
 function check() { 
     const p = document.getElementById('f-paziente').value;
     const uo = document.getElementById('f-uo').value;
-    document.getElementById('btn-save').disabled = !(p && uo && tipo); 
+    const d = document.getElementById('f-data').value;
+    document.getElementById('btn-save').disabled = !(p && uo && tipo && d); 
 }
 
 function save() {
+    const score = calcScore();
+    if(score < 60) {
+        alert("⚠️ ATTENZIONE: Valore critico rilevato (" + score + "%). È necessario attuare immediatamente le misure correttive previste dai protocolli.");
+    }
     const uoPura = document.getElementById('f-uo').value.trim().toUpperCase();
-    db.push({ id: Date.now(), paziente: document.getElementById('f-paziente').value.toUpperCase(), uo: uoPura, score: calcScore(), dataVal: new Date().toLocaleDateString('it-IT'), raw: {...answers} });
+    db.push({ 
+        id: Date.now(), 
+        paziente: document.getElementById('f-paziente').value.toUpperCase(), 
+        uo: uoPura, 
+        score: score, 
+        dataInizio: document.getElementById('f-data').value,
+        dataVal: new Date().toLocaleDateString('it-IT'), 
+        raw: {...answers} 
+    });
     localStorage.setItem('mdr_v7_db', JSON.stringify(db));
     location.reload();
 }
@@ -230,13 +247,13 @@ function nav(p, btn) {
 }
 
 function renderData() {
-    document.getElementById('list-container').innerHTML = db.length ? db.map(r => `<div class="card" onclick="openDetails(${r.id})" style="display:flex; justify-content:space-between; align-items:center;"><div><b>${r.paziente}</b><br><small>${r.uo} | ${r.dataVal}</small></div><b style="font-size:20px; color:${r.score < 60 ? 'var(--no)' : 'var(--si)'}">${r.score}%</b></div>`).reverse().join('') : "Nessuna valutazione.";
+    document.getElementById('list-container').innerHTML = db.length ? db.map(r => `<div class="card" onclick="openDetails(${r.id})" style="display:flex; justify-content:space-between; align-items:center;"><div><b>${r.paziente}</b><br><small>${r.uo} | Val: ${r.dataVal}</small></div><b style="font-size:20px; color:${r.score < 60 ? 'var(--no)' : 'var(--si)'}">${r.score}%</b></div>`).reverse().join('') : "Nessuna valutazione.";
 }
 
 function openDetails(id) {
     const r = db.find(x => x.id === id);
     const nos = ITEMS.filter(i => r.raw[i.id] === 'NO');
-    let html = `<h3>${r.paziente}</h3><p>Reparto: ${r.uo}<br>Data: ${r.dataVal}</p><br><b>Compliance: ${r.score}%</b><hr style="margin:15px 0;"><p>Criticità rilevate:</p>`;
+    let html = `<h3>${r.paziente}</h3><p>Reparto: ${r.uo}<br>Data Inizio Isolamento: ${r.dataInizio || 'N.D.'}<br>Data Valutazione: ${r.dataVal}</p><br><b>Compliance: ${r.score}%</b><hr style="margin:15px 0;"><p>Criticità rilevate:</p>`;
     nos.forEach(n => html += `<div style="color:var(--no); padding:5px 0; font-size:13px;">✘ ${n.t}</div>`);
     document.getElementById('detail-content').innerHTML = html;
     document.getElementById('detail-overlay').style.display = 'block';
@@ -252,7 +269,7 @@ function openDetails(id) {
 
     document.getElementById('ws-btn').onclick = () => {
         const numeroTelefono = "393278263522"; 
-        let m = `*VALUTAZIONE ISOLAMENTO MDR*\nPaziente: ${r.paziente}\nReparto: ${r.uo}\nCompliance: ${r.score}%\n\n*CRITICITÀ:*\n`;
+        let m = `*VALUTAZIONE ISOLAMENTO MDR*\nPaziente: ${r.paziente}\nReparto: ${r.uo}\nInizio Isolamento: ${r.dataInizio}\nCompliance: ${r.score}%\n\n*CRITICITÀ:*\n`;
         if(nos.length > 0) {
             nos.forEach(n => m += `- ${n.t}\n`);
         } else {
