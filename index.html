@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Scheda Valutazione Isolamento</title>
+<title>Audit Isolamento v7.1</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"/>
 <style>
 :root { --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; --text: #1e293b; --muted: #64748b; --accent: #0f172a; --si: #10b981; --no: #f43f5e; --warning: #f59e0b; --tab-h: 75px; }
@@ -12,34 +12,21 @@
 body { background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
 .header { background: var(--accent); color: white; padding: 18px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 10; }
 .pages { flex: 1; overflow-y: auto; padding: 15px 15px 120px; }
-.page { display: none; transition: all 0.3s ease; } .page.active { display: block; animation: fadeIn 0.4s; }
+.page { display: none; } .page.active { display: block; animation: fadeIn 0.4s; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Cards Styling */
-.card { background: white; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); position: relative; overflow: hidden; }
+.card { background: white; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); position: relative; }
 .section-title { font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
 .section-title::after { content: ""; flex: 1; height: 1px; background: var(--border); }
 
-/* Circle Progress Analysis */
+/* Circle Progress Analisi */
 .stats-grid { display: flex; justify-content: space-around; align-items: center; gap: 20px; margin: 10px 0; }
 .circle-box { position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; }
 .circle-box svg { transform: rotate(-90deg); width: 100px; height: 100px; }
 .circle-box circle { fill: none; stroke-width: 8; stroke-linecap: round; }
 .circle-bg { stroke: #f1f5f9; }
-.circle-val { stroke: var(--si); transition: stroke-dasharray 1s ease; }
+.circle-val { stroke: var(--si); transition: stroke-dasharray 1s ease; stroke-dasharray: 0 264; }
 .circle-text { position: absolute; font-size: 20px; font-weight: 800; font-family: 'IBM Plex Mono'; }
-
-/* Podio Reparti */
-.podio-item { display: flex; align-items: center; padding: 12px; border-radius: 12px; background: #f8fafc; margin-bottom: 8px; border-left: 4px solid var(--border); }
-.podio-rank { font-size: 20px; margin-right: 15px; }
-.podio-info { flex: 1; }
-.podio-score { font-weight: 800; font-family: 'IBM Plex Mono'; font-size: 16px; }
-
-/* Item Analysis Heatmap */
-.item-stat-row { padding: 12px; border-radius: 10px; margin-bottom: 6px; display: flex; flex-direction: column; gap: 5px; background: rgba(255,255,255,0.5); }
-.item-stat-label { font-size: 13px; line-height: 1.2; font-weight: 500; }
-.item-stat-bar-container { height: 6px; background: #f1f5f9; border-radius: 10px; overflow: hidden; }
-.item-stat-bar { height: 100%; transition: width 1s ease; }
 
 /* Input & Buttons */
 input, select { width: 100%; height: 52px; padding: 0 15px; border: 2px solid var(--border); border-radius: 12px; font-size: 15px; margin-bottom: 12px; outline: none; background: white; }
@@ -49,11 +36,16 @@ input, select { width: 100%; height: 52px; padding: 0 15px; border: 2px solid va
 .active-no { background: var(--no) !important; color: white !important; border-color: var(--no) !important; }
 .active-na { background: var(--muted) !important; color: white !important; border-color: var(--muted) !important; }
 
+/* Archivio List */
+.arch-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--border); }
+
+/* Overlay Dettagli */
+#detail-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:1000; overflow-y:auto; padding:20px; }
+
 /* Tabs */
-.tabs { display: flex; background: white; border-top: 1px solid var(--border); position: fixed; bottom: 0; width: 100%; height: var(--tab-h); padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 10px rgba(0,0,0,0.03); }
-.tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-.tab.active { color: var(--text); position: relative; }
-.tab.active::before { content: ""; position: absolute; top: 0; width: 30px; height: 4px; background: var(--text); border-radius: 0 0 4px 4px; }
+.tabs { display: flex; background: white; border-top: 1px solid var(--border); position: fixed; bottom: 0; width: 100%; height: var(--tab-h); padding-bottom: env(safe-area-inset-bottom); }
+.tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); font-size: 10px; font-weight: 700; text-transform: uppercase; }
+.tab.active { color: var(--accent); border-top: 3px solid var(--accent); }
 </style>
 </head>
 <body>
@@ -63,8 +55,8 @@ input, select { width: 100%; height: 52px; padding: 0 15px; border: 2px solid va
 <div class="pages">
     <div class="page active" id="page-form">
         <div class="card">
-            <div class="section-title">Informazioni Generali</div>
-            <input type="text" id="f-paziente" placeholder="Cognome Nome Paziente" oninput="check()">
+            <div class="section-title">Anagrafica</div>
+            <input type="text" id="f-paziente" placeholder="Paziente (Cognome Nome)" oninput="check()">
             <input type="text" id="f-uo" list="uo-list" placeholder="Unità Operativa" oninput="check()">
             <datalist id="uo-list"></datalist>
             <div style="display:flex; gap:10px;">
@@ -72,51 +64,61 @@ input, select { width: 100%; height: 52px; padding: 0 15px; border: 2px solid va
                 <input type="date" id="f-data-inizio" oninput="check()">
             </div>
             <div class="ans-group">
-                <button class="ans-btn" style="font-size:10px" id="btn-contatto" onclick="setTipo('contatto')">👋 CONTATTO</button>
-                <button class="ans-btn" style="font-size:10px" id="btn-droplet" onclick="setTipo('droplet')">💧 DROPLET</button>
-                <button class="ans-btn" style="font-size:10px" id="btn-aereo" onclick="setTipo('aereo')">🌬️ AEREO</button>
+                <button class="ans-btn" id="btn-contatto" onclick="setTipo('contatto')">👋 CONTATTO</button>
+                <button class="ans-btn" id="btn-droplet" onclick="setTipo('droplet')">💧 DROPLET</button>
+                <button class="ans-btn" id="btn-aereo" onclick="setTipo('aereo')">🌬️ AEREO</button>
             </div>
         </div>
         <div id="survey-content"></div>
         <div class="card" style="background: var(--accent); color: white; text-align: center;">
-            <div style="font-size: 10px; opacity: 0.6; margin-bottom: 5px;">LIVE COMPLIANCE</div>
-            <div id="live-score" style="font-size: 48px; font-weight: 800; font-family: 'IBM Plex Mono';">0%</div>
-            <div id="live-status" style="font-size: 12px; font-weight: 600; letter-spacing: 1px;">-</div>
+            <div id="live-score" style="font-size: 48px; font-weight: 800;">0%</div>
+            <div id="live-status" style="font-size: 12px; opacity: 0.8;">COMPLIANCE</div>
         </div>
-        <button id="btn-save" disabled onclick="save()" style="width: 100%; height: 65px; background: #000; color: #fff; border: none; border-radius: 18px; font-weight: 800; font-size: 16px; margin-bottom: 50px;">REGISTRA SCHEDA</button>
+        <button id="btn-save" disabled onclick="save()" style="width: 100%; height: 60px; background: #000; color: #fff; border: none; border-radius: 18px; font-weight: 800; margin-bottom: 50px;">SALVA SCHEDA</button>
     </div>
 
     <div class="page" id="page-data">
-        <div class="section-title">Schede Salvate</div>
+        <div class="section-title">Archivio Risultati</div>
+        <button onclick="exportToExcel()" style="width:100%; padding:10px; background:#15803d; color:white; border:none; border-radius:10px; margin-bottom:15px; font-weight:700;">ESPORTA EXCEL (CSV)</button>
         <div id="list-container"></div>
     </div>
 
     <div class="page" id="page-stats">
         <div class="card" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white;">
-            <div class="section-title" style="color: rgba(255,255,255,0.5);">Performance Globale</div>
+            <div class="section-title" style="color: rgba(255,255,255,0.5);">Media Globale</div>
             <div class="stats-grid">
                 <div class="circle-box">
-                    <svg><circle class="circle-bg" cx="50" cy="50" r="42"></circle><circle id="stat-circle" class="circle-val" cx="50" cy="50" r="42" stroke-dasharray="0 264"></circle></svg>
+                    <svg><circle class="circle-bg" cx="50" cy="50" r="42"></circle><circle id="stat-circle" class="circle-val" cx="50" cy="50" r="42"></circle></svg>
                     <div class="circle-text" id="stat-avg">0%</div>
                 </div>
-                <div style="text-align: left;">
-                    <div style="font-size: 24px; font-weight: 800;" id="stat-tot">0</div>
-                    <div style="font-size: 10px; opacity: 0.6;">AUDIT TOTALI</div>
-                </div>
+                <div><span id="stat-tot" style="font-size:24px; font-weight:800;">0</span><br><small>Audit totali</small></div>
             </div>
         </div>
-
         <div class="card">
-            <div class="section-title">🏆 Ranking Reparti</div>
-            <select id="stat-filter-uo" onchange="renderStats()" style="height: 40px; font-size: 12px; margin-bottom: 15px; border-color: #eee;"></select>
+            <div class="section-title">Filtra Reparto</div>
+            <select id="stat-filter-uo" onchange="renderStats()"></select>
             <div id="reparto-ranking"></div>
         </div>
-
         <div class="card">
-            <div class="section-title">📊 Analisi Criticità (Item)</div>
+            <div class="section-title">Analisi per Item</div>
             <div id="item-analysis"></div>
         </div>
     </div>
+</div>
+
+<div id="detail-overlay">
+    <button onclick="closeDetails()" style="background:#f1f5f9; border:none; padding:10px 15px; border-radius:8px; font-weight:700; margin-bottom:20px;">← CHIUDI</button>
+    <div id="detail-content"></div>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-top:20px;">
+        <button id="ws-btn" style="background:#25d366; color:white; border:none; padding:15px; border-radius:12px; font-weight:700;">📲 WHATSAPP</button>
+        <button id="del-btn" style="color:var(--no); background:none; border:none; font-weight:600;">ELIMINA SCHEDA</button>
+    </div>
+</div>
+
+<div class="tabs">
+    <div class="tab active" onclick="nav('form', this)">📝<br>Nuova</div>
+    <div class="tab" onclick="nav('data', this)">📚<br>Archivio</div>
+    <div class="tab" onclick="nav('stats', this)">📊<br>Analisi</div>
 </div>
 
 <script>
@@ -150,11 +152,10 @@ let answers = {}, tipo = '', db = JSON.parse(localStorage.getItem('mdr_v7_db')) 
 
 function init() {
     let html = '';
-    const cats = ["Esterno", "Interno", "Vestizione", "Svestizione", "Doc"];
-    [1,2,3,4,5].forEach((c, idx) => {
-        html += `<div class="card"><div class="section-title">${cats[idx]}</div>`;
+    [1,2,3,4,5].forEach(c => {
+        html += `<div class="card"><div class="section-title">Categoria ${c}</div>`;
         ITEMS.filter(i => i.c === c).forEach(i => {
-            html += `<div style="margin-bottom:18px;"><span style="font-size:14px; display:block; margin-bottom:10px;">${i.id}. ${i.t}</span>
+            html += `<div style="margin-bottom:15px;"><span style="font-size:13px; display:block; margin-bottom:8px;">${i.id}. ${i.t}</span>
                 <div class="ans-group">
                     <button class="ans-btn" onclick="setAns(${i.id},'SI',this)">SI</button>
                     <button class="ans-btn" onclick="setAns(${i.id},'NO',this)">NO</button>
@@ -175,7 +176,8 @@ function updateUOList() {
 
 function setTipo(v) {
     tipo = v;
-    document.querySelectorAll('.tipo-btn').forEach(b => b.style.borderColor = '#e2e8f0');
+    document.querySelectorAll('#btn-contatto, #btn-droplet, #btn-aereo').forEach(b => b.style.borderColor = '#e2e8f0');
+    document.getElementById('btn-'+v).style.borderColor = 'var(--accent)';
     check();
 }
 
@@ -183,8 +185,7 @@ function setAns(id, val, btn) {
     answers[id] = val;
     btn.parentElement.querySelectorAll('.ans-btn').forEach(b => b.className = 'ans-btn');
     btn.className = 'ans-btn active-' + val.toLowerCase();
-    calcScore();
-    check();
+    calcScore(); check();
 }
 
 function calcScore() {
@@ -192,55 +193,63 @@ function calcScore() {
     Object.values(answers).forEach(v => { if(v==='SI') si++; if(v==='NO') no++; });
     let pct = (si+no) > 0 ? Math.round((si/(si+no))*100) : 0;
     document.getElementById('live-score').textContent = pct + '%';
-    const status = document.getElementById('live-status');
-    if(pct < 60) status.textContent = "ALTO RISCHIO"; else if(pct < 85) status.textContent = "ATTENZIONE"; else status.textContent = "BUONA COMPLIANCE";
     return pct;
 }
 
 function check() { document.getElementById('btn-save').disabled = !(document.getElementById('f-paziente').value && document.getElementById('f-uo').value && tipo); }
 
 function save() {
-    db.push({ id: Date.now(), paziente: document.getElementById('f-paziente').value.toUpperCase(), uo: document.getElementById('f-uo').value.toUpperCase(), score: calcScore(), dataVal: new Date().toLocaleDateString('it-IT'), raw: {...answers} });
+    const score = calcScore();
+    db.push({ id: Date.now(), paziente: document.getElementById('f-paziente').value.toUpperCase(), uo: document.getElementById('f-uo').value.toUpperCase(), score: score, dataVal: new Date().toLocaleDateString('it-IT'), raw: {...answers} });
     localStorage.setItem('mdr_v7_db', JSON.stringify(db));
+    if(score < 60) alert("ATTENZIONE: Compliance critica!");
     location.reload();
 }
+
+function renderData() {
+    const c = document.getElementById('list-container');
+    c.innerHTML = db.length ? db.map(r => `
+        <div class="arch-item" onclick="openDetails(${r.id})">
+            <div><b>${r.paziente}</b><br><small>${r.uo} | ${r.dataVal}</small></div>
+            <b style="color:${r.score < 60 ? 'var(--no)' : 'var(--si)'}">${r.score}%</b>
+        </div>`).reverse().join('') : "Archivio vuoto.";
+}
+
+function openDetails(id) {
+    const r = db.find(x => x.id === id);
+    const nos = ITEMS.filter(i => r.raw[i.id] === 'NO');
+    let html = `<h2>${r.paziente}</h2><p>${r.uo} - ${r.dataVal}</p><hr><br><h3>Criticità:</h3>`;
+    nos.forEach(n => html += `<div style="color:var(--no); padding:5px 0;">✘ ${n.t}</div>`);
+    document.getElementById('detail-content').innerHTML = html;
+    document.getElementById('detail-overlay').style.display = 'block';
+    document.getElementById('del-btn').onclick = () => { if(confirm("Eliminare?")) { db = db.filter(x=>x.id!==id); localStorage.setItem('mdr_v7_db', JSON.stringify(db)); closeDetails(); renderData(); } };
+    document.getElementById('ws-btn').onclick = () => {
+        let m = `*REPORT AUDIT*\nPaziente: ${r.paziente}\nScore: ${r.score}%\n\n*ERRORI:*\n`;
+        nos.forEach(n => m += `- ${n.t}\n`);
+        window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
+    };
+}
+
+function closeDetails() { document.getElementById('detail-overlay').style.display = 'none'; }
 
 function renderStats() {
     const filter = document.getElementById('stat-filter-uo').value;
     const data = filter === 'ALL' ? db : db.filter(r => r.uo === filter);
-    
     if(!data.length) return;
-
-    // Circle Progress
     const avg = Math.round(data.reduce((s,c)=>s+c.score,0)/data.length);
     document.getElementById('stat-avg').textContent = avg + "%";
     document.getElementById('stat-tot').textContent = data.length;
-    const offset = 264 - (264 * avg / 100);
     const circle = document.getElementById('stat-circle');
-    circle.style.strokeDasharray = `${264 - offset} 264`;
-    circle.style.stroke = avg < 60 ? 'var(--no)' : (avg < 85 ? 'var(--warning)' : 'var(--si)');
+    circle.style.strokeDasharray = `${(264 * avg / 100)} 264`;
+    circle.style.stroke = avg < 60 ? 'var(--no)' : 'var(--si)';
 
-    // Ranking Reparti
-    const reps = {};
-    db.forEach(r => { if(!reps[r.uo]) reps[r.uo] = []; reps[r.uo].push(r.score); });
-    const ranked = Object.keys(reps).map(k => ({ uo: k, avg: Math.round(reps[k].reduce((a,b)=>a+b)/reps[k].length) })).sort((a,b)=>b.avg-a.avg);
-    
-    document.getElementById('reparto-ranking').innerHTML = ranked.map((r, i) => `
-        <div class="podio-item" style="border-color: ${r.avg < 60 ? 'var(--no)' : (r.avg < 85 ? 'var(--warning)' : 'var(--si)')}">
-            <div class="podio-rank">${i===0?'🥇':(r.avg < 60 ? '⚠️':'🏥')}</div>
-            <div class="podio-info"><b>${r.uo}</b></div>
-            <div class="podio-score" style="color:${r.avg < 60 ? 'var(--no)' : (r.avg < 85 ? 'var(--warning)' : 'var(--si)')}">${r.avg}%</div>
-        </div>`).join('');
-
-    // Item Heatmap
     document.getElementById('item-analysis').innerHTML = ITEMS.map(item => {
         let si = 0, tot = 0;
         data.forEach(r => { if(r.raw[item.id]==='SI'){si++; tot++;} if(r.raw[item.id]==='NO') tot++; });
         let p = tot > 0 ? Math.round((si/tot)*100) : 0;
-        let c = p < 60 ? 'var(--no)' : (p < 85 ? 'var(--warning)' : 'var(--si)');
-        return `<div class="item-stat-row">
-            <div style="display:flex; justify-content:space-between; font-size:11px;"><b>${item.id}. ${item.t}</b> <span>${p}%</span></div>
-            <div class="item-stat-bar-container"><div class="item-stat-bar" style="width:${p}%; background:${c}"></div></div>
+        return `<div style="font-size:11px; margin-bottom:8px;">
+            <div style="display:flex; justify-content:space-between;"><span>${item.id}. ${item.t}</span><b>${p}%</b></div>
+            <div style="height:4px; background:#eee;"><div style="width:${p}%; height:100%; background:${p<60?'var(--no)':'var(--si)'}"></div></div>
         </div>`;
     }).join('');
 }
@@ -249,8 +258,18 @@ function nav(p, btn) {
     document.querySelectorAll('.page, .tab').forEach(el => el.classList.remove('active'));
     document.getElementById('page-'+p).classList.add('active');
     btn.classList.add('active');
-    if(p==='stats') renderStats();
-    if(p==='data') document.getElementById('list-container').innerHTML = db.map(r => `<div class="card"><b>${r.paziente}</b><br><small>${r.uo} | ${r.dataVal}</small><div style="position:absolute; right:20px; top:25px; font-weight:800; font-size:20px;">${r.score}%</div></div>`).reverse().join('');
+    if(p==='data') renderData();
+    if(p==='stats') { updateUOList(); renderStats(); }
+}
+
+function exportToExcel() {
+    let csv = "Paziente;UO;Score;Data\n";
+    db.forEach(r => csv += `${r.paziente};${r.uo};${r.score};${r.dataVal}\n`);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "Audit.csv";
+    link.click();
 }
 
 init();
