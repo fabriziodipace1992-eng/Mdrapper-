@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>Gestione Isolamento v8.0</title>
+<title>Verifica Isolamento MDR v8.1</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"/>
 <style>
 :root { --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; --text: #1e293b; --muted: #64748b; --accent: #0f172a; --si: #10b981; --no: #f43f5e; --warning: #f59e0b; --tab-h: 85px; }
@@ -39,17 +39,17 @@ input { width: 100%; height: 50px; padding: 0 15px; border: 2px solid var(--bord
 </head>
 <body>
 
-<div class="header">SISTEMA GESTIONE MDR</div>
+<div class="header">VALUTAZIONE ISOLAMENTO MDR</div>
 
 <div class="pages">
     <div class="page active" id="page-form">
         <div class="card">
             <div class="section-title">Anagrafica</div>
             <input type="text" id="f-paziente" placeholder="Paziente (Cognome Nome)" oninput="check()">
-            <input type="text" id="f-uo" placeholder="Scrivi Reparto..." oninput="showSuggestions(this.value)" autocomplete="off">
+            <input type="text" id="f-uo" placeholder="Unità di assegnazione / Reparto" oninput="showSuggestions(this.value)" autocomplete="off">
             <div id="suggestion-box" class="suggestion-box"></div>
             <div style="display:flex; gap:10px;">
-                <input type="text" id="f-ubicazione" placeholder="Stanza/Letto" oninput="check()">
+                <input type="text" id="f-ubicazione" placeholder="Stanza / Letto" oninput="check()">
                 <input type="date" id="f-data" oninput="check()">
             </div>
             <div class="ans-group">
@@ -95,36 +95,36 @@ input { width: 100%; height: 50px; padding: 0 15px; border: 2px solid var(--bord
 
 <script>
 const ITEMS = [
-    {c:1, id:1, t:"Presenza cartello indicatore all'ingresso della stanza"},
-    {c:1, id:2, t:"Presenza all'esterno carrello/ripiano dedicato per i DPI"},
-    {c:1, id:3, t:"Assenza nel carrello di materiale e/o presidi non necessari"},
-    {c:2, id:4, t:"Presenza di contenitore per rifiuti sanitari pericolosi a rischio infettivo"},
-    {c:2, id:5, t:"Presenza contenitore sacchi biancheria idrosolubili (se necessario)"},
-    {c:2, id:6, t:"Presenza materiale sanitario dedicato/monouso (es. fonendoscopio, sfigmo)"},
-    {c:2, id:7, t:"Uso dedicato di servizi igienici"},
-    {c:3, id:8, t:"DPI adottati correttamente MEDICO (in ingresso)"},
-    {c:3, id:9, t:"Igiene delle mani MEDICO (in ingresso)"},
-    {c:3, id:10, t:"DPI adottati correttamente INFERMIERE (in ingresso)"},
-    {c:3, id:11, t:"Igiene delle mani INFERMIERE (in ingresso)"},
-    {c:3, id:12, t:"DPI adottati correttamente OSS (in ingresso)"},
-    {c:3, id:13, t:"Igiene delle mani OSS (in ingresso)"},
-    {c:3, id:14, t:"Esecuzione educazione sanitaria a paziente/visitatori"},
-    {c:4, id:15, t:"DPI rimossi correttamente MEDICO (in uscita)"},
-    {c:4, id:16, t:"Igiene delle mani MEDICO (in uscita)"},
-    {c:4, id:17, t:"DPI rimossi correttamente INFERMIERE (in uscita)"},
-    {c:4, id:18, t:"Igiene delle mani INFERMIERE (in uscita)"},
-    {c:4, id:19, t:"DPI rimossi correttamente OSS (in uscita)"},
-    {c:4, id:20, t:"Igiene delle mani OSS (in uscita)"},
-    {c:5, id:21, t:"Informazione isolamento in documentazione sanitaria chiara e visibile"},
-    {c:5, id:22, t:"Scheda sanificazione ambientale compilata correttamente"},
-    {c:5, id:23, t:"Scheda sanificazione presidi compilata correttamente"}
+    {c:1, id:1, t:"Presenza cartello indicatore all'ingresso della stanza (su entrambe i versanti della porta)"},
+    {c:1, id:2, t:"Presenza all'esterno della stanza carrello/ripiano dedicato con DPI"},
+    {c:1, id:3, t:"Assenza di materiale e/o presidi non necessari"},
+    {c:2, id:4, t:"Presenza contenitore per rifiuti sanitari infetti"},
+    {c:2, id:5, t:"Presenza contenitore sacchi speciali per la biancheria idrosolubili"},
+    {c:2, id:6, t:"Presenza materiale sanitario dedicato e/o monouso per il paziente"},
+    {c:2, id:7, t:"Uso dedicato di servizi igienici in relazione al grado di autosufficienza"},
+    {c:3, id:8, t:"DPI previsti adottati correttamente dal personale medico"},
+    {c:3, id:9, t:"Corretta igiene mani del personale medico (Inizio attività)"},
+    {c:3, id:10, t:"DPI previsti adottati correttamente dal personale infermieristico"},
+    {c:3, id:11, t:"Corretta igiene mani del personale infermieristico (Inizio attività)"},
+    {c:3, id:12, t:"DPI previsti adottati correttamente dal personale di assistenza"},
+    {c:3, id:13, t:"Corretta igiene mani del personale di assistenza (Inizio attività)"},
+    {c:3, id:14, t:"Viene eseguita educazione sanitaria (se paziente autosufficiente)"},
+    {c:4, id:15, t:"DPI usati tolti e smaltiti correttamente dal personale medico"},
+    {c:4, id:16, t:"Corretta igiene mani del personale medico (Fine attività)"},
+    {c:4, id:17, t:"DPI usati tolti e smaltiti correttamente dal personale infermieristico"},
+    {c:4, id:18, t:"Corretta igiene mani del personale infermieristico (Fine attività)"},
+    {c:4, id:19, t:"DPI usati tolti e smaltiti correttamente dal personale di assistenza"},
+    {c:4, id:20, t:"Corretta igiene mani del personale di assistenza (Fine attività)"},
+    {c:5, id:21, t:"L'informazione della positività a CRE nella documentazione clinica e infermieristica è presente, chiara, correttamente riportata e condivisa"},
+    {c:5, id:22, t:"E' presente e correttamente compilata la scheda di sanificazione per la ditta di pulizie"},
+    {c:5, id:23, t:"E' presente e correttamente compilata la scheda di sanificazione dei presidi"}
 ];
 
 let answers = {}, tipo = '', db = JSON.parse(localStorage.getItem('mdr_v7_db')) || [];
 
 function init() {
     let html = '';
-    const cats = ["1. ESTERNO STANZA", "2. INTERNO STANZA", "3. PERSONALE (Ingresso/Attività)", "4. PERSONALE (Uscita)", "5. DOCUMENTAZIONE"];
+    const cats = ["All'esterno della stanza", "All'interno della stanza", "Personale Sanitario Inizio Attività", "Personale Sanitario Fine Attività", "Gestione Documentale"];
     [1,2,3,4,5].forEach((c, idx) => {
         html += `<div class="card"><div class="section-title">${cats[idx]}</div>`;
         ITEMS.filter(i => i.c === c).forEach(i => {
@@ -236,7 +236,7 @@ function renderData() {
 function openDetails(id) {
     const r = db.find(x => x.id === id);
     const nos = ITEMS.filter(i => r.raw[i.id] === 'NO');
-    let html = `<h3>${r.paziente}</h3><p>Reparto: ${r.uo}<br>Data: ${r.dataVal}</p><br><b>Punteggio: ${r.score}%</b><hr style="margin:15px 0;"><p>Criticità:</p>`;
+    let html = `<h3>${r.paziente}</h3><p>Reparto: ${r.uo}<br>Data: ${r.dataVal}</p><br><b>Compliance: ${r.score}%</b><hr style="margin:15px 0;"><p>Criticità rilevate:</p>`;
     nos.forEach(n => html += `<div style="color:var(--no); padding:5px 0; font-size:13px;">✘ ${n.t}</div>`);
     document.getElementById('detail-content').innerHTML = html;
     document.getElementById('detail-overlay').style.display = 'block';
@@ -252,7 +252,7 @@ function openDetails(id) {
 
     document.getElementById('ws-btn').onclick = () => {
         const numeroTelefono = "393278263522"; 
-        let m = `*REPORT VALUTAZIONE MDR*\nPaziente: ${r.paziente}\nReparto: ${r.uo}\nScore: ${r.score}%\n\n*CRITICITÀ:*\n`;
+        let m = `*VALUTAZIONE ISOLAMENTO MDR*\nPaziente: ${r.paziente}\nReparto: ${r.uo}\nCompliance: ${r.score}%\n\n*CRITICITÀ:*\n`;
         if(nos.length > 0) {
             nos.forEach(n => m += `- ${n.t}\n`);
         } else {
