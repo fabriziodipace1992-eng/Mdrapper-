@@ -590,7 +590,40 @@ function save() {
 
     db.push(record);
     localStorage.setItem(DB_KEY, JSON.stringify(db));
-    location.reload();
+
+    // ANIMAZIONE
+    const toast = document.createElement('div');
+    toast.innerHTML = '✅ Scheda registrata!';
+    toast.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        background: #10b981;
+        color: white;
+        padding: 20px 36px;
+        border-radius: 20px;
+        font-size: 18px;
+        font-weight: 800;
+        z-index: 9999;
+        opacity: 0;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    `;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translate(-50%, -50%) scale(1)';
+    }, 10);
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        setTimeout(() => {
+            location.reload();
+        }, 300);
+    }, 1500);
 }
 
 function renderStats() {
