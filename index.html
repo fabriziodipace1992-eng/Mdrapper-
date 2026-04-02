@@ -184,21 +184,23 @@ input[type="date"]::-webkit-date-and-time-value {
 }
 .tabs {
     display: flex;
-    background: var(--accent);
-    border: 1px solid var(--border);
+    background: white;
+    border-top: 1px solid var(--border);
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
     height: calc(44px + env(safe-area-inset-bottom));
     z-index: 900;
-    box-shadow: 0 20px 0 20px var(--accent);  /* solo questo, rimuovi l'altro */
     padding-bottom: env(safe-area-inset-bottom);
     align-items: flex-start;
     padding-top: 4px;
 }
 
-
+.tab.active {
+    color: var(--accent);
+    background: #f1f5f9;
+}
 
 .tab {
     flex: 1;
@@ -211,19 +213,13 @@ input[type="date"]::-webkit-date-and-time-value {
 }
 
 .tab-icon {
-    font-size: 24px;
+    font-size: 20px;
 }
 
 .tab-label {
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
     text-transform: uppercase;
-}
-
-.tab.active {
-    color: var(--accent);
-    background: #f1f5f9;
-    border-top: none;
 }
 #detail-overlay {
     display: none;
