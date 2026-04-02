@@ -184,13 +184,14 @@ input[type="date"]::-webkit-date-and-time-value {
     display: flex;
     background: white;
     border: 1px solid var(--border);
-    height: 64px;
     border-radius: 18px 18px 0 0;
     box-shadow: 0 -4px 12px rgba(15,23,42,0.08);
     flex-shrink: 0;
-    padding-bottom: env(safe-area-inset-bottom);
     height: calc(64px + env(safe-area-inset-bottom));
+    align-items: flex-start;
+    padding-top: 0;
 }
+
 
 
 .tab {
