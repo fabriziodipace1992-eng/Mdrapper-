@@ -58,7 +58,7 @@ body {
 .pages {
     flex: 1;
     overflow-y: auto;
-    padding: 15px 15px 110px;
+    padding: 15px 15px calc(12px + var(--tab-h) + env(safe-area-inset-bottom));
 }
 .page {
     display: none;
@@ -324,7 +324,7 @@ input[type="date"]::-webkit-date-and-time-value {
             <div style="font-size:10px; opacity:0.7; font-weight:800;">COMPLIANCE</div>
         </div>
 
-        <button id="btn-save" disabled onclick="save()" style="width:100%; height:60px; background:#000; color:#fff; border:none; border-radius:15px; font-weight:800; margin-bottom:40px; font-size:16px;">
+        <button id="btn-save" disabled onclick="save()" style="width:100%; height:60px; background:#000; color:#fff; border:none; border-radius:15px; font-weight:800; margin-bottom:10px; font-size:16px;">
             REGISTRA SCHEDA
         </button>
     </div>
