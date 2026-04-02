@@ -48,7 +48,7 @@ body {
 .header {
     background: var(--accent);
     color: white;
-    padding: 18px;
+    padding: calc(18px + env(safe-area-inset-top)) 18px 18px;
     text-align: center;
     font-weight: 800;
     font-size: 14px;
@@ -185,7 +185,7 @@ input[type="date"]::-webkit-date-and-time-value {
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: var(--tab-h);
+    height: calc(var(--tab-h) + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
     z-index: 900;
 }
