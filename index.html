@@ -915,43 +915,35 @@ function averageScore(records) {
     sevenDaysAgo.setDate(now.getDate() - 6);
     sevenDaysAgo.setHours(0, 0, 0, 0);
 
-    const previousStart = new Date(sevenDaysAgo);
-    previousStart.setDate(sevenDaysAgo.getDate() - 7);
-    previousStart.setHours(0, 0, 0, 0);
-
-    const previousEnd = new Date(sevenDaysAgo);
-    previousEnd.setDate(sevenDaysAgo.getDate() - 1);
-    previousEnd.setHours(23, 59, 59, 999);
-
     const last7 = data.filter(r => {
         const d = r.dataInizio ? new Date(r.dataInizio) : null;
         return d && d >= sevenDaysAgo && d <= now;
     });
 
-    const prev7 = data.filter(r => {
+    const historical = data.filter(r => {
         const d = r.dataInizio ? new Date(r.dataInizio) : null;
-        return d && d >= previousStart && d <= previousEnd;
+        return d && d < sevenDaysAgo;
     });
 
     const avgLast7 = averageScore(last7);
-    const avgPrev7 = averageScore(prev7);
-    const diff = avgLast7 - avgPrev7;
+    const avgHistorical = averageScore(historical);
+    const diff = avgLast7 - avgHistorical;
 
     let trendLabel = 'STABILE';
     let trendColor = 'var(--muted)';
     let trendSymbol = '➖';
 
-    if (diff > 0) {
+    if (historical.length && diff > 0) {
         trendLabel = 'IN MIGLIORAMENTO';
         trendColor = 'var(--si)';
         trendSymbol = '▲';
-    } else if (diff < 0) {
+    } else if (historical.length && diff < 0) {
         trendLabel = 'IN PEGGIORAMENTO';
         trendColor = 'var(--no)';
         trendSymbol = '▼';
     }
 
-    const diffText = prev7.length ? `${diff > 0 ? '+' : ''}${diff}%` : 'N.D.';
+    const diffText = historical.length ? ${diff > 0 ? '+' : ''}${diff}% : 'N.D.';
 
     document.getElementById('trend-box').innerHTML = `
         <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
@@ -961,9 +953,9 @@ function averageScore(records) {
                 <div style="font-size:11px; color:var(--muted);">(n=${last7.length})</div>
             </div>
             <div style="text-align:right;">
-                <div style="font-size:11px; color:var(--muted); font-weight:700;">7 GIORNI PRECEDENTI</div>
-                <div style="font-size:24px; font-weight:800;">${prev7.length ? avgPrev7 + '%' : 'N.D.'}</div>
-                <div style="font-size:11px; color:var(--muted);">(n=${prev7.length})</div>
+                <div style="font-size:11px; color:var(--muted); font-weight:700;">MEDIA STORICA</div>
+                <div style="font-size:24px; font-weight:800;">${historical.length ? avgHistorical + '%' : 'N.D.'}</div>
+                <div style="font-size:11px; color:var(--muted);">(n=${historical.length})</div>
             </div>
         </div>
 
