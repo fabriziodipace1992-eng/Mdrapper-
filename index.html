@@ -924,15 +924,13 @@ function averageScore(records) {
     previousEnd.setHours(23, 59, 59, 999);
 
     const last7 = data.filter(r => {
-        const d = parseItalianDate(r.dataVal);
-        const d = r.dataInizio ? new Date(r.dataInizio) : null;
-        return d && d >= sevenDaysAgo && d <= now;
+        const dateObj = r.dataInizio ? new Date(r.dataInizio) : parseItalianDate(r.dataVal);
+        return dateObj && dateObj >= sevenDaysAgo && dateObj <= now;
     });
 
     const prev7 = data.filter(r => {
-        const d = parseItalianDate(r.dataVal);
-        const d = r.dataInizio ? new Date(r.dataInizio) : null;
-        return d && d >= previousStart && d <= previousEnd;
+        const dateObj = r.dataInizio ? new Date(r.dataInizio) : parseItalianDate(r.dataVal);
+        return dateObj && dateObj >= previousStart && dateObj <= previousEnd;
     });
 
     const avgLast7 = averageScore(last7);
@@ -969,16 +967,7 @@ function averageScore(records) {
             </div>
         </div>
 
-        <div style="
-            margin-top:8px;
-            padding:14px;
-            border-radius:12px;
-            background:#f8fafc;
-            border:1px solid var(--border);
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-        ">
+        <div style="margin-top:8px; padding:14px; border-radius:12px; background:#f8fafc; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
             <div>
                 <div style="font-size:11px; color:var(--muted); font-weight:700;">VARIAZIONE</div>
                 <div style="font-size:22px; font-weight:800; color:${trendColor};">${diffText}</div>
