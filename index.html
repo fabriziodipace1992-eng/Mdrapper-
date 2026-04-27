@@ -924,12 +924,12 @@ function averageScore(records) {
     previousEnd.setHours(23, 59, 59, 999);
 
     const last7 = data.filter(r => {
-        const d = parseItalianDate(r.dataVal);
+        const d = r.dataInizio ? new Date(r.dataInizio) : null;
         return d && d >= sevenDaysAgo && d <= now;
     });
 
     const prev7 = data.filter(r => {
-        const d = parseItalianDate(r.dataVal);
+        const d = r.dataInizio ? new Date(r.dataInizio) : null;
         return d && d >= previousStart && d <= previousEnd;
     });
 
