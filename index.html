@@ -908,69 +908,53 @@ function averageScore(records) {
     return Math.round(records.reduce((sum, r) => sum + r.score, 0) / records.length);
 }
     function renderTrend(data) {
-    const now = new Date();
-    now.setHours(23, 59, 59, 999);
+    if (!data || data.length === 0) {
+        document.getElementById('trend-box').innerHTML = '<div class="muted-empty">Inserisci almeno una valutazione per vedere il trend.</div>';
+        return;
+    }
 
-    const sevenDaysAgo = new Date(now);
-    sevenDaysAgo.setDate(now.getDate() - 6);
-    sevenDaysAgo.setHours(0, 0, 0, 0);
+    // Calcola la Media di tutte le schede in archivio
+    const avgGlobal = Math.round(data.reduce((sum, r) => sum + r.score, 0) / data.length);
+    
+    // Prende l'ultima scheda inserita (la più recente)
+    const lastRecord = data[data.length - 1];
+    const lastScore = lastRecord.score;
 
-    const previousStart = new Date(sevenDaysAgo);
-    previousStart.setDate(sevenDaysAgo.getDate() - 7);
-    previousStart.setHours(0, 0, 0, 0);
+    // Calcola la differenza
+    const diff = lastScore - avgGlobal;
 
-    const previousEnd = new Date(sevenDaysAgo);
-    previousEnd.setDate(sevenDaysAgo.getDate() - 1);
-    previousEnd.setHours(23, 59, 59, 999);
-
-    const last7 = data.filter(r => {
-        const dateObj = r.dataInizio ? new Date(r.dataInizio) : parseItalianDate(r.dataVal);
-        return dateObj && dateObj >= sevenDaysAgo && dateObj <= now;
-    });
-
-    const prev7 = data.filter(r => {
-        const dateObj = r.dataInizio ? new Date(r.dataInizio) : parseItalianDate(r.dataVal);
-        return dateObj && dateObj >= previousStart && dateObj <= previousEnd;
-    });
-
-    const avgLast7 = averageScore(last7);
-    const avgPrev7 = averageScore(prev7);
-    const diff = avgLast7 - avgPrev7;
-
-    let trendLabel = 'STABILE';
+    let trendLabel = 'IN LINEA';
     let trendColor = 'var(--muted)';
     let trendSymbol = '➖';
 
     if (diff > 0) {
-        trendLabel = 'IN MIGLIORAMENTO';
+        trendLabel = 'SOPRA MEDIA';
         trendColor = 'var(--si)';
         trendSymbol = '▲';
     } else if (diff < 0) {
-        trendLabel = 'IN PEGGIORAMENTO';
+        trendLabel = 'SOTTO MEDIA';
         trendColor = 'var(--no)';
         trendSymbol = '▼';
     }
 
-    const diffText = prev7.length ? `${diff > 0 ? '+' : ''}${diff}%` : 'N.D.';
-
     document.getElementById('trend-box').innerHTML = `
         <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
             <div>
-                <div style="font-size:11px; color:var(--muted); font-weight:700;">ULTIMI 7 GIORNI</div>
-                <div style="font-size:24px; font-weight:800;">${last7.length ? avgLast7 + '%' : 'N.D.'}</div>
-                <div style="font-size:11px; color:var(--muted);">(n=${last7.length})</div>
+                <div style="font-size:11px; color:var(--muted); font-weight:700;">MEDIA STORICA</div>
+                <div style="font-size:24px; font-weight:800; color:var(--accent);">${avgGlobal}%</div>
+                <div style="font-size:11px; color:var(--muted);">(Totale: n=${data.length})</div>
             </div>
             <div style="text-align:right;">
-                <div style="font-size:11px; color:var(--muted); font-weight:700;">7 GIORNI PRECEDENTI</div>
-                <div style="font-size:24px; font-weight:800;">${prev7.length ? avgPrev7 + '%' : 'N.D.'}</div>
-                <div style="font-size:11px; color:var(--muted);">(n=${prev7.length})</div>
+                <div style="font-size:11px; color:var(--muted); font-weight:700;">ULTIMO DATO</div>
+                <div style="font-size:24px; font-weight:800; color:var(--accent);">${lastScore}%</div>
+                <div style="font-size:11px; color:var(--muted);">${lastRecord.dataVal}</div>
             </div>
         </div>
 
         <div style="margin-top:8px; padding:14px; border-radius:12px; background:#f8fafc; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
             <div>
-                <div style="font-size:11px; color:var(--muted); font-weight:700;">VARIAZIONE</div>
-                <div style="font-size:22px; font-weight:800; color:${trendColor};">${diffText}</div>
+                <div style="font-size:11px; color:var(--muted); font-weight:700;">SCOSTAMENTO</div>
+                <div style="font-size:22px; font-weight:800; color:${trendColor};">${diff > 0 ? '+' : ''}${diff}%</div>
             </div>
             <div style="text-align:right; color:${trendColor}; font-weight:800; font-size:13px;">
                 ${trendSymbol} ${trendLabel}
