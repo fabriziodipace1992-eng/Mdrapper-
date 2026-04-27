@@ -107,11 +107,15 @@ input[type="date"] {
     font-size: 15px;
     appearance: none;
     -webkit-appearance: none;
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     line-height: normal;
 }
 input[type="date"]::-webkit-date-and-time-value {
-    text-align: left;
+    text-align: center;
+    margin: auto;
 }
 .label-sm {
     font-size: 11px;
